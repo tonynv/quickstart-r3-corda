@@ -251,6 +251,7 @@
             }
         },
         "CordaStack": {
+            "DependsOn": "VPCStack",
             "Type": "AWS::CloudFormation::Stack",
             "Properties": {
                 "TemplateURL": {
