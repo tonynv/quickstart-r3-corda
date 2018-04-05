@@ -17,11 +17,8 @@ global:
     - us-west-1
     - us-west-2
   reporting: true
- 
+
 tests:
-  quickstart-r3-cordat1:
-    parameter_input: quickstart-r3-corda-example-params1.json
-    template_file: quickstart-r3-corda-example1.template
-  quickstart-r3-cordat2:
-    parameter_input: quickstart-r3-corda-example-params2.json
-    template_file: quickstart-r3-corda-example2.template
+  corda-test:
+     parameter_input: corda-master.json
+     template_file: corda-master.template
