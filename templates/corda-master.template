@@ -235,6 +235,12 @@
                             "Outputs.PublicSubnet1ID"
                         ]
                     },
+                    "PublicSubnet2ID": {
+                        "Fn::GetAtt": [
+                            "VPCStack",
+                            "Outputs.PublicSubnet2ID"
+                        ]
+                    },
                     "QSS3BucketName": {
                         "Ref": "QSS3BucketName"
                     },
