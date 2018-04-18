@@ -324,5 +324,14 @@
         }
     },
     "Outputs": {
+        "CordaInstanceDNSName": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "CordaInstance",
+                    "PublicDnsName"
+                ]
+            },
+            "Description": "Public DNS Name for the CordaInstance"
+        }
     }
 }
