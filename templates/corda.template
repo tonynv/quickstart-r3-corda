@@ -290,7 +290,7 @@
                     "Fn::Base64": {
                         "Fn::Join": [ "",
                             [
-                                "#!/bin/bash -x",
+                                "#!/bin/bash -e",
                                 "\n",
                                 "echo \"=====================================================================================\"\n",
                                 "echo \"\t------------------[] Starting: Load QuickStart Common Utils\"\n",
@@ -324,14 +324,14 @@
         }
     },
     "Outputs": {
-        "CordaInstanceDNSName": {
+        "CordaInstancePublicDnsName": {
             "Value": {
                 "Fn::GetAtt": [
                     "CordaInstance",
                     "PublicDnsName"
                 ]
             },
-            "Description": "Public DNS Name for the CordaInstance"
+            "Description": "Public DNS Name for the Corda Instance"
         }
     }
 }
