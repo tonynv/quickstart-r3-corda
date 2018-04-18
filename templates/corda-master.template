@@ -12,8 +12,6 @@
                     "NumberOfAZs",
                     "PublicSubnet1CIDR",
                     "PublicSubnet2CIDR",
-                    "PublicSubnet3CIDR",
-                    "PublicSubnet4CIDR",
                     "RemoteAccessCIDR",
                     "VPCCIDR"
                 ]
@@ -46,12 +44,6 @@
                 },
                 "PublicSubnet2CIDR": {
                     "default": "Public Subnet 2 CIDR"
-                },
-                "PublicSubnet3CIDR": {
-                    "default": "Public Subnet 3 CIDR"
-                },
-                "PublicSubnet4CIDR": {
-                    "default": "Public Subnet 4 CIDR"
                 },
                 "QSS3BucketName": {
                     "default": "Quick Start S3 Bucket Name"
@@ -131,11 +123,6 @@
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/16-28",
             "Default": "10.0.144.0/20",
             "Description": "CIDR block for the public (DMZ) subnet 2 located in Availability Zone 2",
-            "Type": "String"
-        },
-        "PublicSubnet3CIDR": {
-            "Default": "",
-            "Description": "CIDR block for the public subnet 3 located in Availability Zone 3 (if required)",
             "Type": "String"
         },
         "PublicSubnet4CIDR": {
@@ -218,28 +205,6 @@
                     },
                     "PublicSubnet2CIDR": {
                         "Ref": "PublicSubnet2CIDR"
-                    },
-                    "PublicSubnet3CIDR": {
-                        "Fn::If": [
-                            "3AZCondition",
-                            {
-                                "Ref": "PublicSubnet3CIDR"
-                            },
-                            {
-                                "Ref": "AWS::NoValue"
-                            }
-                        ]
-                    },
-                    "PublicSubnet4CIDR": {
-                        "Fn::If": [
-                            "4AZCondition",
-                            {
-                                "Ref": "PublicSubnet4CIDR"
-                            },
-                            {
-                                "Ref": "AWS::NoValue"
-                            }
-                        ]
                     },
                     "VPCCIDR": {
                         "Ref": "VPCCIDR"
