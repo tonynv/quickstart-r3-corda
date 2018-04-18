@@ -84,17 +84,6 @@
             "Description": "Enter a Public/private key pair. If you do not have one in this region, please create it before continuing",
             "Type": "AWS::EC2::KeyPair::KeyName"
         },
-        "NumBastionHosts": {
-            "AllowedValues": [
-                "1",
-                "2",
-                "3",
-                "4"
-            ],
-            "Default": "1",
-            "Description": "Enter the number of bastion hosts to create",
-            "Type": "String"
-        },
         "PublicSubnet1ID": {
             "Description": "ID of the public subnet 1 that you want to provision the first bastion into (e.g., subnet-a0246dcd)",
             "Type": "AWS::EC2::Subnet::Id"
@@ -219,7 +208,7 @@
         "CordaSecurityGroup": {
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
-                "GroupDescription": "Enables SSH Access" ,
+                "GroupDescription": "Enables SSH Access",
                 "VpcId": {
                     "Ref": "VPCID"
                 },
@@ -255,13 +244,12 @@
                         "CidrIp": {
                             "Ref": "RemoteAccessCIDR"
                         }
-
                     }
                 ]
             }
         },
         "CordaInstance": {
-            "Type" : "AWS::EC2::Instance",
+            "Type": "AWS::EC2::Instance",
             "Properties": {
                 "KeyName": {
                     "Ref": "KeyPairName"
@@ -278,44 +266,66 @@
                 "InstanceType": {
                     "Ref": "InstanceType"
                 },
-                "SecurityGroupIds" : [
+                "SecurityGroupIds": [
                     {
-                        "Ref" : "CordaSecurityGroup"
+                        "Ref": "CordaSecurityGroup"
                     }
                 ],
                 "SubnetId": {
-                    "Ref" : "PublicSubnet1ID"
+                    "Ref": "PublicSubnet1ID"
                 },
                 "UserData": {
                     "Fn::Base64": {
-                        "Fn::Join": [ "",
+                        "Fn::Join": [
+                            "",
                             [
-                                "#!/bin/bash -e",
+                                "#!/bin/bash -x\n",
+                                "function cfn_fail {",
                                 "\n",
-                                "echo \"=====================================================================================\"\n",
-                                "echo \"\t------------------[] Starting: Load QuickStart Common Utils\"\n",
-                                "\n",
-                                "QSLOCATION=",
+                                "cfn-signal -e 1 ",
+                                "--stack ",
                                 {
-                                    "Fn::Sub": [
-                                        "https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}",
-                                        {
-                                            "S3Region": {
-                                                "Fn::If": [
-                                                    "GovCloudCondition",
-                                                    "s3-us-gov-west-1",
-                                                    "s3"
-                                                ]
-                                            }
-                                        }
-                                    ]
+                                    "Ref": "AWS::StackName"
                                 },
+                                " --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                " --resource CordaInstance",
+                                "\nexit 1\n}",
                                 "\n",
-                                "curl -s {QSLOCATION}submodules/quickstart-linux-utilities/quickstart-cfn-tools.source -o ~/quickstart-cfn-tools.source\n",
-                                "source ~/quickstart-cfn-tools.source \n",
-                                "echo \"=====================================================================================\"\n",
-                                "echo \"\t------------------[] Completed: Load QuickStart Common Utils\"\n"
-
+                                "function cfn_success {",
+                                "\n",
+                                "cfn-signal -e 0 ",
+                                "--stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                " --resource CordaInstance",
+                                "\nexit 0\n}",
+                                "\n",
+                                "echo \"[Cloning: Load QuickStart Common Utils]\"\n",
+                                "\n",
+                                "#Once Repo is public (Use quickstart-linux-utilities submodue)\n",
+                                "git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git\n",
+                                "source /quickstart-linux-utilities/quickstart-cfn-tools.source\n",
+                                "\n",
+                                "echo \"[Loaded: Load QuickStart Common Utils]\"\n",
+                                "\n",
+                                "echo \"[Update Operating System]\"\n",
+                                "export QSSTACKNAME=${AWS::StackName}",
+                                "export QSREGION=${AWS::Region}",
+                                "qs_update-os || qs_error\n",
+                                "qs_bootstrap_pip\n",
+                                "qs_aws-cfn-bootstrap\n",
+                                "echo \"[INFO]: Bootstrapping Status = $(qs_status)\"\n",
+                                "[ $(qs_status) == 0 ] && cfn_success || echo cfn_fail",
+                                "\n",
+                                "\n"
                             ]
                         ]
                     }
