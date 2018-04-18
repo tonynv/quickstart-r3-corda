@@ -20,7 +20,8 @@
                         "default": "Corda EC2 Configuration"
                     },
                     "Parameters": [
-                        "KeyPairName"
+                        "KeyPairName",
+                        "CordaAccessCIDR"
                     ]
                 },
                 {
@@ -47,7 +48,10 @@
                     "default": "Quick Start S3 Key Prefix"
                 },
                 "RemoteAccessCIDR": {
-                    "default": "Allowed Bastion External Access CIDR"
+                    "default": "Allowed SSH Access CIDR"
+                },
+                "CordaAccessCIDR": {
+                    "default": "Allowed Application Access CIDR"
                 },
                 "VPCID": {
                     "default": "VPC ID"
@@ -74,33 +78,6 @@
             "Default": "t2.micro",
             "Description": "Amazon EC2 instance type for the bastion instances",
             "Type": "String"
-        },
-        "EnableBanner": {
-            "AllowedValues": [
-                "true",
-                "false"
-            ],
-            "Default": "false",
-            "Description": "To include a banner to be displayed when connecting via SSH to the bastion, set this parameter to true",
-            "Type": "String"
-        },
-        "EnableTCPForwarding": {
-            "Type": "String",
-            "Description": "Enable/Disable TCP Forwarding",
-            "Default": "false",
-            "AllowedValues": [
-                "true",
-                "false"
-            ]
-        },
-        "EnableX11Forwarding": {
-            "Type": "String",
-            "Description": "Enable/Disable X11 Forwarding",
-            "Default": "false",
-            "AllowedValues": [
-                "true",
-                "false"
-            ]
         },
         "KeyPairName": {
             "Description": "Enter a Public/private key pair. If you do not have one in this region, please create it before continuing",
@@ -142,7 +119,13 @@
         "RemoteAccessCIDR": {
             "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
             "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
-            "Description": "Allowed CIDR block for external SSH access to the bastions",
+            "Description": "Allowed CIDR block for external SSH access",
+            "Type": "String"
+        },
+        "CordaAccessCIDR": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$",
+            "ConstraintDescription": "CIDR block parameter must be in the form x.x.x.x/x",
+            "Description": "Allowed CIDR block for external application access",
             "Type": "String"
         },
         "VPCID": {
@@ -200,12 +183,29 @@
                         }
                     },
                     {
+                        "IpProtocol": "tcp",
+                        "FromPort": "10002",
+                        "ToPort": "10002",
+                        "CidrIp": {
+                            "Ref": "CordaAccessCIDR"
+                        }
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "10003",
+                        "ToPort": "10002",
+                        "CidrIp": {
+                            "Ref": "CordaAccessCIDR"
+                        }
+                    },
+                    {
                         "IpProtocol": "icmp",
                         "FromPort": "-1",
                         "ToPort": "-1",
                         "CidrIp": {
                             "Ref": "RemoteAccessCIDR"
                         }
+
                     }
                 ]
             }
@@ -257,7 +257,13 @@
                 "us-west-2": {
                     "US1604HVM": "ami-ca89eeb2"
                 }
+            },
+            "LinuxAMINameMap": {
+                "Ubuntu-Server-16.04-LTS-HVM": {
+                    "Code": "US1604HVM"
+                }
             }
+
 
         },
         "CordaInstance": {
@@ -272,7 +278,15 @@
                         {
                             "Ref": "AWS::Region"
                         },
-                        "US1604HVM"
+                        {
+                            "Fn::FindInMap": [
+                                "LinuxAMINameMap",
+                                {
+                                    "Ref": "AMIOS"
+                                },
+                                "Code"
+                            ]
+                        }
                     ]
                 },
                 "InstanceType": {
