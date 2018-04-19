@@ -265,7 +265,7 @@
                             }
                         },
                         "sources": {
-                            "/home/ubuntu": "https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases/net/corda/corda/3.1-corda/corda-3.1-corda.jar"
+                            "/usr/src/corda": "https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases/net/corda/corda/3.1-corda/corda-3.1-corda.jar"
                         },
                         "files": {
                             "/home/ubuntu/install_corda.sh": {
@@ -291,7 +291,7 @@
                     "run_install": {
                         "commands": {
                             "start_install": {
-                                "command": "bash /home/ubuntu/install.sh"
+                                "command": "bash /home/ubuntu/install_corda.sh"
                             }
                         }
                     }
@@ -402,6 +402,12 @@
                 ]
             },
             "Description": "Public DNS Name for the Corda Instance"
+        },
+        "CordaInstancePublicIPAddress": {
+            "Value": {
+                "Fn::Sub": "ubuntu@${CordaInstance.PublicIp}"
+            },
+            "Description": "Public IP address for the Corda instance"
         }
     }
 }
