@@ -250,6 +250,53 @@
         },
         "CordaInstance": {
             "Type": "AWS::EC2::Instance",
+            "Metadata": {
+                "AWS::CloudFormation::Init": {
+                    "configSets": {
+                        "corda_install": [
+                            "corda_jar",
+                            "run_install"
+                        ]
+                    },
+                    "corda_jar": {
+                        "packages": {
+                            "apt": {
+                                "openjdk-8-jdk": []
+                            }
+                        },
+                        "sources": {
+                            "/home/ubuntu": "https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases/net/corda/corda/3.1-corda/corda-3.1-corda.jar"
+                        },
+                        "files": {
+                            "/home/ubuntu/install_corda.sh": {
+                                "source": {
+                                    "Fn::Sub": [
+                                        "https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/install_corda.sh",
+                                        {
+                                            "QSS3BucketName": {
+                                                "Ref": "QSS3BucketName"
+                                            },
+                                            "QSS3KeyPrefix": {
+                                                "Ref": "QSS3KeyPrefix"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root"
+                            }
+                        }
+                    },
+                    "run_install": {
+                        "commands": {
+                            "start_install": {
+                                "command": "bash /home/ubuntu/install.sh"
+                            }
+                        }
+                    }
+                }
+            },
             "Properties": {
                 "KeyName": {
                     "Ref": "KeyPairName"
@@ -323,6 +370,19 @@
                                 "qs_bootstrap_pip\n",
                                 "qs_aws-cfn-bootstrap\n",
                                 "echo \"[INFO]: Bootstrapping Status = $(qs_status)\"\n",
+                                "cfn-init -v ",
+                                " --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                " --resource CordaInstance",
+                                " --configsets corda_install",
+                                " --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "# Signal the status from cfn-init\n",
                                 "[ $(qs_status) == 0 ] && cfn_success || echo cfn_fail",
                                 "\n",
                                 "\n"
