@@ -229,31 +229,38 @@ Resources:
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash -x
-          function cfn_fail
-          {
-          cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
-          exit 1
-          }
-          function cfn_success
-          {
-          cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
-          exit 0
-          }
-          echo \'[Cloning: Load QuickStart Common Utils]\'
-          #Once Repo is public (Use quickstart-linux-utilities submodue)
-          git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
-          source /quickstart-linux-utilities/quickstart-cfn-tools.source
-          echo \'[Loaded: Load QuickStart Common Utils]\'
-          echo \'[Update Operating System]\'
-          qs_update-os || qs_error
-          qs_bootstrap_pip
-          qs_aws-cfn-bootstrap
-          cfn-init -v --stack ${AWS::StackName} --resource CordaInstance  --configsets corda_install --region ${AWS::Region} || cfn_fail
-          # Signal cfn-init (final check)
-          [ $(qs_status) == 0 ] && cfn_success || cfn_fail
+      UserData: !Base64
+        Fn::Sub:
+          - |
+            #!/bin/bash -x
+            #CFN Functions
+            function cfn_fail
+            {
+            cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
+            exit 1
+            }
+            function cfn_success
+            {
+            cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
+            exit 0
+            }
+            S3URI=https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}
+            NODE_CONF=${!S3URI}scripts/node.conf_stub
+            echo \'[Cloning: Load QuickStart Common Utils]\'
+            #Once Repo is public (Use quickstart-linux-utilities submodue)
+            git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
+            source /quickstart-linux-utilities/quickstart-cfn-tools.source
+            echo \'[Loaded: Load QuickStart Common Utils]\'
+            echo \'[Update Operating System]\'
+            qs_update-os || qs_error
+            qs_bootstrap_pipa || qs_error
+            qs_aws-cfn-bootstrap || qs_error
+            cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
+            # Generate node.conf
+            wget ${!NODE_CONF} -O /opt/corda/node.conf
+            # Signal cfn-init (final check)
+            [ $(qs_status) == 0 ] && cfn_success || cfn_fail
+          - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
 Outputs:
   CordaInstancePublicDnsName:
     Value: !GetAtt
@@ -263,4 +270,3 @@ Outputs:
   CordaInstancePublicIPAddress:
     Value: !Sub 'ubuntu@${CordaInstance.PublicIp}'
     Description: Public IP address for the Corda instance
-
