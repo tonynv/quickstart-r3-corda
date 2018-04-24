@@ -6,3 +6,4 @@ cd /opt/corda
 sudo wget -O corda.jar https://r3.bintray.com/corda/net/corda/corda/3.1-corda/corda-3.1-corda.jar
 sudo wget -O corda-webserver.jar https://r3.bintray.com/corda/net/corda/corda-webserver/3.1-corda/corda-webserver-3.1-corda.jar
 sudo mkdir /opt/corda/cordapps
+sudo mkdir /opt/corda/certificates
