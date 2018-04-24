@@ -33,7 +33,7 @@ Metadata:
       RemoteAccessCIDR:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
-        default: Allowed Application Access CIDR
+        default: Allowed Cordalication Access CIDR
       VPCID:
         default: VPC ID
 Parameters:
@@ -187,12 +187,13 @@ Resources:
           packages:
             apt:
               openjdk-8-jdk: []
+              wget: []
           sources:
             /usr/src/corda: >-
               https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases/net/corda/corda/3.1-corda/corda-3.1-corda.jar
           files:
             /home/ubuntu/install_corda.sh:
-              source: !Sub 
+              source: !Sub
                 - >-
                   https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/install_corda.sh
                 - QSS3BucketName: !Ref QSS3BucketName
@@ -206,7 +207,7 @@ Resources:
               command: bash /home/ubuntu/install_corda.sh
     Properties:
       KeyName: !Ref KeyPairName
-      ImageId: !FindInMap 
+      ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
         - US1604HVM
@@ -236,12 +237,12 @@ Resources:
           qs_update-os || qs_error
           qs_bootstrap_pip
           qs_aws-cfn-bootstrap
-          cfn-init -v --stack !Ref ${AWS::StackName} --resource AppInstance  --configsets corda_install --region ${AWS::Region}
-          # Signal the status from cfn-init
-          [ $(qs_status) == 0 ] && cfn_success || echo cfn_fail
+          cfn-init -v --stack ${AWS::StackName} --resource CordaInstance  --configsets corda_install --region ${AWS::Region} || cfn_fail
+          # Signal cfn-init (final check)
+          [ $(qs_status) == 0 ] && cfn_success || cfn_fail
 Outputs:
   CordaInstancePublicDnsName:
-    Value: !GetAtt 
+    Value: !GetAtt
       - CordaInstance
       - PublicDnsName
     Description: Public DNS Name for the Corda Instance
