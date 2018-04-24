@@ -16,6 +16,8 @@ Metadata:
       - Label:
           default: Corda Configuration
         Parameters:
+          - EmailAddress
+          - LegalName
           - CordaAccessCIDR
           - KeyPairName
           - InstanceType
@@ -25,6 +27,10 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
+      EmailAddress:
+        default: Email address
+      LegalName:
+        default: Legal name
       PublicSubnet1CIDR:
         default: Public Subnet 1 CIDR
       PublicSubnet2CIDR:
@@ -55,6 +61,14 @@ Parameters:
       Availability Zones are used for this deployment, and the logical order of
       your selections is preserved.
     Type: 'List<AWS::EC2::AvailabilityZone::Name>'
+  EmailAddress:
+   Description: Email address
+   Type: String
+   AllowedPattern: ^(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+   ConstraintDescription: Must be a valid email address.
+  LegalName:
+   Description: Legal Name
+   Type: String
   KeyPairName:
     Description: The name of an existing public/private key pair, which allows you to
       securely connect to your instance after it launches
@@ -177,6 +191,8 @@ Resources:
       Parameters:
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
+        EmailAddress: !Ref EmailAddress
+        LegalName: !Ref LegalName
         PublicSubnet1ID: !GetAtt
           - VPCStack
           - Outputs.PublicSubnet1ID
