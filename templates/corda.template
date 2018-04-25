@@ -17,6 +17,7 @@ Metadata:
           - LegalName
           - KeyPairName
           - CordaAccessCIDR
+          - CordaWebserverCIDR
           - InstanceType
       - Label:
           default: AWS Quick Start Configuration
@@ -39,7 +40,9 @@ Metadata:
       RemoteAccessCIDR:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
-        default: Allowed Cordalication Access CIDR
+        default: Allowed Corda Access CIDR
+      CordaWebserverCIDR:
+        default: Allowed Corda WebServer Access CIDR
       VPCID:
         default: VPC ID
 Parameters:
@@ -116,7 +119,13 @@ Parameters:
     AllowedPattern: >-
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: Allowed CIDR block for external application access
+    Description: Allowed CIDR block for Corda access
+    Type: String
+  CordaWebserverCIDR:
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for Corda webserver access
     Type: String
   VPCID:
     Description: 'ID of the VPC (e.g., vpc-0343606e)'
@@ -186,7 +195,7 @@ Resources:
           FromPort: '10003'
           ToPort: '10003'
           CidrIp: !Ref CordaAccessCIDR
-       - IpProtocol: tcp
+        - IpProtocol: tcp
           FromPort: '8080'
           ToPort: '8080'
           CidrIp: !Ref CordaWebserverCIDR
