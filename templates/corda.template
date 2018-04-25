@@ -237,6 +237,10 @@ Resources:
         - !Ref 'AWS::Region'
         - US1604HVM
       InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: '100'
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
