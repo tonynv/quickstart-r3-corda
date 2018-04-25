@@ -209,6 +209,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         RemoteAccessCIDR: !Ref RemoteAccessCIDR
         CordaAccessCIDR: !Ref RemoteAccessCIDR
+        CordaWebserverCIDR: !Ref CordaWebserverCIDR
         VPCID: !GetAtt
           - VPCStack
           - Outputs.VPCID
