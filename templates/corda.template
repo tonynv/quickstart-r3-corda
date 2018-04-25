@@ -203,9 +203,6 @@ Resources:
             apt:
               openjdk-8-jdk: []
               wget: []
-          sources:
-            /usr/src/corda: >-
-              https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases/net/corda/corda/3.1-corda/corda-3.1-corda.jar
           files:
             /home/ubuntu/install_corda.sh:
               source: !Sub
