@@ -1,0 +1,26 @@
+{
+    "baseDirectory" : "/opt/corda",
+    "emailAddress" : "__EMAILADDRESS__",
+    "extraAdvertisedServiceIds" : [],
+    "keyStorePassword" : "corda",
+    "myLegalName" : "O=__LEGALNAME__, L=, C=GB",
+    "p2pAddress" : "__IPADDRESS__:10002",
+    "rpcSettings" : {
+        "address" : "__IPADDRESS__:10003",
+        "adminAddress" : "__IPADDRESS__:10004",
+        "standAloneBroker" : false,
+        "useSsl" : false
+    },
+    "rpcUsers" : [
+        {
+            "password" : "corda",
+            "permissions" : [
+                "ALL"
+            ],
+            "username" : "corda"
+        }
+    ],
+    "trustStorePassword" : "trustpass",
+    "useTestClock" : true,
+    "webAddress" : "0.0.0.0:8080"
+}
