@@ -258,6 +258,9 @@ Resources:
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Generate node.conf
             wget ${!NODE_CONF} -O /opt/corda/node.conf
+            sed -i "s/__EMAILADDRESS__/${EmailAddress}/g" /opt/corda/node.conf
+            sed -i "s/__LEGALNAME__/${LegalName}/g" /opt/corda/node.conf
+            sed -i "s/__IPADDRESS__/$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)/g" /opt/corda/node.conf
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
           - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
