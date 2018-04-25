@@ -4,6 +4,14 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
+        "ParameterKey": "LegalName",
+        "ParameterValue": "Some Name"
+    },
+    {
+        "ParameterKey": "EmailAddress",
+        "ParameterValue": "someone@somewhere.com"
+    },
+    {
         "ParameterKey": "KeyPairName",
         "ParameterValue": "tonynv"
     },
