@@ -186,6 +186,10 @@ Resources:
           FromPort: '10003'
           ToPort: '10003'
           CidrIp: !Ref CordaAccessCIDR
+       - IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080'
+          CidrIp: !Ref CordaWebserverCIDR
         - IpProtocol: icmp
           FromPort: '-1'
           ToPort: '-1'
