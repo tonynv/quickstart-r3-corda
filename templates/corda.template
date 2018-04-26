@@ -207,6 +207,18 @@ Resources:
           corda_install:
             - corda_jar
             - run_install
+            - systemd_config
+        systemd_config:
+          files:
+            /etc/systemd/system/corda.service:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda.service
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000700'
+              owner: root
+              group: root
         corda_jar:
           packages:
             apt:
@@ -284,3 +296,4 @@ Outputs:
   CordaInstancePublicIPAddress:
     Value: !Sub 'ubuntu@${CordaInstance.PublicIp}'
     Description: Public IP address for the Corda instance
+
