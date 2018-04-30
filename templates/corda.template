@@ -208,6 +208,7 @@ Resources:
             - corda_jar
             - run_install
             - systemd_config
+            - run_services
         systemd_config:
           files:
             /etc/systemd/system/corda.service:
@@ -216,7 +217,17 @@ Resources:
                   https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda.service
                 - QSS3BucketName: !Ref QSS3BucketName
                   QSS3KeyPrefix: !Ref QSS3KeyPrefix
-              mode: '000700'
+              mode: '000755'
+              owner: root
+              group: root
+          files:
+            /etc/systemd/system/corda-webserver.service:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda-webserver.service
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000755'
               owner: root
               group: root
         corda_jar:
@@ -236,8 +247,10 @@ Resources:
               group: root
         run_install:
           commands:
-            start_install:
-              command: bash /home/ubuntu/install_corda.sh
+            start_corda :
+              command: service start corda
+            start_corda-weberver :
+              command: service start corda-webserver
     Properties:
       KeyName: !Ref KeyPairName
       ImageId: !FindInMap
