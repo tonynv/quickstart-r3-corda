@@ -7,21 +7,34 @@ Metadata:
           default: Network Configuration (new VPC)
         Parameters:
           - AvailabilityZones
+          - CordaAccessCIDR
+          - CordaWebserverCIDR
           - NumberOfAZs
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
           - RemoteAccessCIDR
-          - CordaAccessCIDR
-          - CordaWebserverCIDR
           - VPCCIDR
       - Label:
           default: Corda Configuration
         Parameters:
-          - EmailAddress
-          - LegalName
           - CordaAccessCIDR
-          - KeyPairName
+          - EmailAddress
           - InstanceType
+          - KeyPairName
+          - LegalName
+      - Label:
+          default: Corda RDS Configuration
+        Parameters:
+          - DBAllocatedStorage
+          - DBAutoMinorVersionUpgrade
+          - DBBackupRetentionPeriod
+          - DBInstanceClass
+          - DBIops
+          - DBMasterUserPassword
+          - DBMasterUsername
+          - DBMultiAZ
+          - DBName
+          - DBStorageType
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -46,10 +59,6 @@ Metadata:
         default: Allowed 
       CordaWebserverCIDR:
         default: Allowed Corda WebServer Access CIDR
-      VPCCIDR:
-        default: VPC CIDR
-      VPCID:
-        default: VPC ID
       KeyPairName:
         default: SSH Key Name
       InstanceType:
@@ -58,6 +67,30 @@ Metadata:
         default: Number of used AZs
       AvailabilityZones:
         default: Availability Zones
+      VPCID:
+        default: VPC ID
+      VPCCIDR:
+        default: VPC CIDR
+      DBAllocatedStorage:
+        default: DB storage size (in GiB)
+      DBAutoMinorVersionUpgrade:
+        default: Automatic upgrade to new Amazon Aurora/MySQL minor versions
+      DBBackupRetentionPeriod:
+        default: DB backup retention period
+      DBInstanceClass:
+        default: Amazon Aurora/MySQL DB instance type
+      DBIops:
+        default: DB IOPS
+      DBMasterUserPassword:
+        default: DB master password
+      DBMasterUsername:
+        default: DB master user name
+      DBMultiAZ:
+        default: Enable Multi-AZ deployment for DB instance
+      DBName:
+        default: DB name
+      DBStorageType:
+        default: DB storage type
 Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC. Only two
@@ -67,7 +100,7 @@ Parameters:
   EmailAddress:
    Description: Email address
    Type: String
-   AllowedPattern: ^(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+   AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
    ConstraintDescription: Must be a valid email address.
   LegalName:
    Description: Legal Name
@@ -154,6 +187,128 @@ Parameters:
     Default: 10.0.0.0/16
     Description: CIDR block for the VPC
     Type: String
+  DBAllocatedStorage:
+    ConstraintDescription: Must be between 5 and 4096 GiB. If Iops specified, AllocatedStorage
+      must be at least 100 GiB and with minimum Iops value of 1000
+    Default: '16'
+    Description: The size of the database in gigabytes (GiB)
+    MaxValue: '4096'
+    MinValue: '5'
+    Type: Number
+  DBAutoMinorVersionUpgrade:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Select true/false to setup Auto Minor Version upgrade
+    Type: String
+  DBBackupRetentionPeriod:
+    Default: '7'
+    Description: The number of days for which automatic DB snapshots are retained.
+    Type: String
+  DBInstanceClass:
+    AllowedValues:
+    - db.m4.medium
+    - db.m4.large
+    - db.m4.xlarge
+    - db.m4.2xlarge
+    - db.m4.2xlarge
+    - db.r4.large
+    - db.r4.xlarge
+    - db.r4.2xlarge
+    - db.r4.4xlarge
+    - db.r4.8xlarge
+    - db.t2.micro
+    - db.t2.small
+    - db.t2.medium
+    - db.t2.large
+    ConstraintDescription: Must select a valid database instance type.
+    Default: db.t2.large
+    Description: The name of the compute and memory capacity class of the DB instance.
+    Type: String
+  DBIops:
+    AllowedValues:
+    - '1000'
+    - '2000'
+    - '3000'
+    - '4000'
+    - '5000'
+    - '6000'
+    - '7000'
+    - '8000'
+    - '9000'
+    - '10000'
+    ConstraintDescription: '1000 Iops min and increased in 1K increments. '
+    Default: '1000'
+    Description: DB Iops. Used only when io1 specified for the StorageType property
+    Type: Number
+  DBMasterUserPassword:
+    AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
+    ConstraintDescription: Must be at least 8 characters containing letters, numbers
+      and symbols.
+    Description: The database admin account password. Must be at least 8 characters
+      containing letters, numbers and symbols
+    MaxLength: '32'
+    MinLength: '8'
+    NoEcho: 'True'
+    Type: String
+  DBMasterUsername:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric
+      characters.
+    Default: aurorapg
+    Description: The database admin account username
+    MaxLength: '16'
+    MinLength: '1'
+    NoEcho: 'true'
+    Type: String
+  DBMultiAZ:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Specifies if the database instance is a multiple Availability Zone
+      deployment.
+    Type: String
+  DBName:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric
+      characters.
+    Default: CordaQuickstartDB
+    Description: Name of Corda Quick Start database.
+    MaxLength: '64'
+    MinLength: '5'
+    Type: String
+  DBStorageType:
+    AllowedValues:
+    - standard
+    - gp2
+    - io1
+    Default: gp2
+    Description: The storage type associated with this database instance
+    Type: String
+  QSS3BucketName:
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: >-
+      Quick Start bucket name can include numbers, lowercase letters, uppercase
+      letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: >-
+      S3 bucket name for the Quick Start assets. Quick Start bucket name can
+      include numbers, lowercase letters, uppercase letters, and hyphens (-). It
+      cannot start or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: '^[0-9a-zA-Z-/]*$'
+    ConstraintDescription: >-
+      Quick Start key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).
+    Default: quickstart-linux-bastion/
+    Description: >-
+      S3 key prefix for the Quick Start assets. Quick Start key prefix can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
 Conditions:
   GovCloudCondition: !Equals
     - !Ref AWS::Region
@@ -174,14 +329,41 @@ Resources:
         AvailabilityZones: !Join
           - ','
           - !Ref AvailabilityZones
-        CreatePrivateSubnets: false
+        CreatePrivateSubnets: true
         KeyPairName: !Ref KeyPairName
+        NumberOfAZs: !Ref NumberOfAZs
         PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
         PublicSubnet2CIDR: !Ref PublicSubnet2CIDR
         VPCCIDR: !Ref VPCCIDR
-        NumberOfAZs: !Ref NumberOfAZs
-  CordaStack:
+  CordaWebServerStack:
     DependsOn: VPCStack
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        Fn::Sub:
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/webserver.template
+        - QSS3Region:
+            Fn::If:
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      Parameters:
+        CordaAccessCIDR: !Ref RemoteAccessCIDR
+        CordaWebserverCIDR: !Ref CordaWebserverCIDR
+        EmailAddress: !Ref EmailAddress
+        InstanceType: !Ref InstanceType
+        KeyPairName: !Ref KeyPairName
+        PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
+        VPCCIDR: !GetAtt VPCStack.Outputs.VPCCIDR
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+  CordaStack:
+    DependsOn: CordaWebServerStack
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL:
@@ -193,22 +375,28 @@ Resources:
             - s3-us-gov-west-1
             - s3
       Parameters:
+        CordaAccessCIDR: !Ref RemoteAccessCIDR
+        CordaWebserverCIDR: !Ref CordaWebserverCIDR
+        DBAllocatedStorage: !Ref DBAllocatedStorage
+        DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
+        DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod
+        DBInstanceClass: !Ref DBInstanceClass
+        DBIops: !Ref DBIops
+        DBMasterUserPassword: !Ref DBMasterUserPassword
+        DBMasterUsername: !Ref DBMasterUsername
+        DBMultiAZ: !Ref DBMultiAZ
+        DBName: !Ref DBName
+        DBStorageType: !Ref DBStorageType
+        EmailAddress: !Ref EmailAddress
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
-        EmailAddress: !Ref EmailAddress
         LegalName: !Ref LegalName
-        PublicSubnet1ID: !GetAtt
-          - VPCStack
-          - Outputs.PublicSubnet1ID
-        PublicSubnet2ID: !GetAtt
-          - VPCStack
-          - Outputs.PublicSubnet2ID
+        PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         RemoteAccessCIDR: !Ref RemoteAccessCIDR
-        CordaAccessCIDR: !Ref RemoteAccessCIDR
-        CordaWebserverCIDR: !Ref CordaWebserverCIDR
-        VPCID: !GetAtt
-          - VPCStack
-          - Outputs.VPCID
-
+        VPCCIDR: !GetAtt VPCStack.Outputs.VPCCIDR
+        VPCID: !GetAtt VPCStack.Outputs.VPCID

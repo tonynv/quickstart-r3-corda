@@ -4,12 +4,40 @@
         "ParameterValue": "tonynv"
     },
     {
+        "ParameterKey": "EmailAddress",
+        "ParameterValue": "tonynv@amazon.com"
+    },
+    {
+        "ParameterKey": "LegalName",
+        "ParameterValue": "Tony Vattathil"
+    },
+    {
         "ParameterKey": "QSS3BucketName",
         "ParameterValue": "$[taskcat_autobucket]"
     },
     {
         "ParameterKey": "QSS3KeyPrefix",
         "ParameterValue": "quickstart-r3-corda/"
+    },
+    {
+        "ParameterKey": "VPCID",
+        "ParameterValue": "vpc-046de9cec628899c8"
+    },
+    {
+        "ParameterKey": "PublicSubnet1ID",
+        "ParameterValue": "subnet-06201a3f0040a2223"
+    },
+    {
+        "ParameterKey": "PublicSubnet2ID",
+        "ParameterValue": "subnet-077713ac1ff8112ab"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1ID",
+        "ParameterValue": "subnet-0181a9347b147744c"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2ID",
+        "ParameterValue": "subnet-003600a60b6f25f9a"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -20,16 +48,15 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
-        "ParameterKey": "VPCID",
-        "ParameterValue": "vpc-464e163f"
+        "ParameterKey": "CordaWebserverCIDR",
+        "ParameterValue": "0.0.0.0/0"
     },
     {
-        "ParameterKey": "PublicSubnet1ID",
-        "ParameterValue": "subnet-3730977c"
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "$[taskcat_genpass_S]"
     },
     {
-        "ParameterKey": "PublicSubnet2ID",
-        "ParameterValue": "subnet-3b3bbe42"
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
     }
-
 ]

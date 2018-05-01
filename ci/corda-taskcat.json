@@ -36,6 +36,10 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "$[taskcat_genpass_S]"
+    },
+    {
         "ParameterKey": "VPCCIDR",
         "ParameterValue": "10.0.0.0/16"
     }
