@@ -56,7 +56,7 @@ Metadata:
       RemoteAccessCIDR:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
-        default: Allowed 
+        default: Allowed Corda Ports CIDR
       CordaWebserverCIDR:
         default: Allowed Corda WebServer Access CIDR
       KeyPairName:
