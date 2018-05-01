@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda WebServer in ASG behind ALB, Apache 2.0 (Please do not remove) May,1,2018'
-
+Description: 'Corda Infrastructure -NGINX WebServer in ASG behind ALB, Apache 2.0 (Please do not remove) May,1,2018'
 Parameters:
   InstanceType:
     Description:  EC2 instance type

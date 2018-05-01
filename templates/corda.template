@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Infrastructure, Apache 2.0 (Please do not remove) May,1,2018'
+Description: 'Corda Infrastructure - Main, A:pache 2.0 (Please do not remove) May,1,2018'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
       - Label:
-          default: Network Configuration (new VPC)
+          default: Network Configuration
         Parameters:
           - RemoteAccessCIDR
           - PublicSubnet1ID
@@ -197,19 +197,14 @@ Parameters:
     Type: String
   DBInstanceClass:
     AllowedValues:
-    - db.m4.medium
-    - db.m4.large
-    - db.m4.xlarge
-    - db.m4.2xlarge
-    - db.m4.2xlarge
     - db.r4.large
     - db.r4.xlarge
     - db.r4.2xlarge
     - db.r4.4xlarge
     - db.r4.8xlarge
-    - db.t2.xlarge
-    ConstraintDescription: Must select a valid database instance type.
-    Default: db.t2.xlarge
+    - db.r4.16xlarge
+    ConstraintDescription: Must select a valid postgress database instance type.
+    Default: db.r4.large
     Description: The name of the compute and memory capacity class of the DB instance.
     Type: String
   DBIops:
@@ -325,6 +320,44 @@ Resources:
         EmailAddress: !Ref EmailAddress
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        PrivateSubnet2ID: !Ref PrivateSubnet2ID
+        PublicSubnet1ID: !Ref PublicSubnet1ID
+        PublicSubnet2ID: !Ref PublicSubnet2ID
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
+        VPCCIDR: !Ref VPCCIDR
+        VPCID: !Ref VPCID
+  CordaStack:
+    DependsOn: CordaWebServerStack
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        Fn::Sub:
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/corda-db.template
+        - QSS3Region:
+            Fn::If:
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      Parameters:
+        CordaAccessCIDR: !Ref RemoteAccessCIDR
+        CordaWebserverCIDR: !Ref CordaWebserverCIDR
+        DBAllocatedStorage: !Ref DBAllocatedStorage
+        DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
+        DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod
+        DBInstanceClass: !Ref DBInstanceClass
+        DBIops: !Ref DBIops
+        DBMasterUserPassword: !Ref DBMasterUserPassword
+        DBMasterUsername: !Ref DBMasterUsername
+        DBMultiAZ: !Ref DBMultiAZ
+        DBName: !Ref DBName
+        DBStorageType: !Ref DBStorageType
+        EmailAddress: !Ref EmailAddress
+        InstanceType: !Ref InstanceType
+        KeyPairName: !Ref KeyPairName
+        LegalName: !Ref LegalName
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
         PrivateSubnet2ID: !Ref PrivateSubnet2ID
         PublicSubnet1ID: !Ref PublicSubnet1ID

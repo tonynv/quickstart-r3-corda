@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda + QuickStart VPC, Apache 2.0 (Please do not remove) April,5,2018'
+Description: 'Corda + QuickStart VPC, Apache 2.0 (Please do not remove) May,1,2018'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -208,22 +208,14 @@ Parameters:
     Type: String
   DBInstanceClass:
     AllowedValues:
-    - db.m4.medium
-    - db.m4.large
-    - db.m4.xlarge
-    - db.m4.2xlarge
-    - db.m4.2xlarge
     - db.r4.large
     - db.r4.xlarge
     - db.r4.2xlarge
     - db.r4.4xlarge
     - db.r4.8xlarge
-    - db.t2.micro
-    - db.t2.small
-    - db.t2.medium
-    - db.t2.large
-    ConstraintDescription: Must select a valid database instance type.
-    Default: db.t2.large
+    - db.r4.16xlarge
+    ConstraintDescription: Must select a valid postgress database instance type.
+    Default: db.r4.large
     Description: The name of the compute and memory capacity class of the DB instance.
     Type: String
   DBIops:
