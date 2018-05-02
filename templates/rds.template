@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Corda Infrastructure - AWS Aurora (MultiAZ Postgress DB), Apache 2.0 (Please do not remove) May,1,2018'
+Parameters:
+  DBAllocatedStorage:
+    ConstraintDescription: must be between 5 and 4096 GiB. If Iops specified, AllocatedStorage
+      must be at least 100 GiB and with minimum Iops value of 1000
+    Default: '16'
+    Description: The size of the database in gigabytes (GiB)
+    MaxValue: '4096'
+    MinValue: '5'
+    Type: Number
+  DBAutoMinorVersionUpgrade:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Select true/false to setup Auto Minor Version upgrade
+    Type: String
+  DBBackupRetentionPeriod:
+    Default: '7'
+    Description: The number of days for which automatic DB snapshots are retained.
+    Type: String
+  DBInstanceClass:
+    AllowedValues:
+    - db.r4.large
+    - db.r4.xlarge
+    - db.r4.2xlarge
+    - db.r4.4xlarge
+    - db.r4.8xlarge
+    ConstraintDescription: Must select a valid database instance type.
+    Default: db.r4.large
+    Description: The name of the compute and memory capacity class of the DB instance.
+    Type: String
+  DBIops:
+    AllowedValues:
+    - '1000'
+    - '2000'
+    - '3000'
+    - '4000'
+    - '5000'
+    - '6000'
+    - '7000'
+    - '8000'
+    - '9000'
+    - '10000'
+    ConstraintDescription: '1000 Iops min and increased in 1K increments. '
+    Default: '1000'
+    Description: DB Iops. Used only when io1 specified for the StorageType property
+    Type: Number
+  DBMasterUserPassword:
+    AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
+    ConstraintDescription: Min 8 chars.
+    Description: The database admin account password
+    MaxLength: '64'
+    MinLength: '8'
+    NoEcho: 'True'
+    Type: String
+  DBMasterUsername:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: must begin with a letter and contain only alphanumeric
+      characters.
+    Default: admin
+    Description: The database admin account username
+    MaxLength: '16'
+    MinLength: '1'
+    NoEcho: 'true'
+    Type: String
+  DBMultiAZ:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Specifies if the database instance is a multiple Availability Zone
+      deployment.
+    Type: String
+  DBName:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    Default: QuickstartCordaDB
+    Description: Name of Amazon Aurora DB for Corda Stack
+    MaxLength: '64'
+    MinLength: '5'
+    Type: String
+  DBStorageType:
+    AllowedValues:
+    - standard
+    - gp2
+    - io1
+    Default: standard
+    Description: The storage type associated with this database instance
+    Type: String
+  RDSSecurityGroup:
+    Description: Amazon Aurora Security Group
+    Type: AWS::EC2::SecurityGroup::Id
+  Subnets:
+    ConstraintDescription: must be list of existing subnet Ids
+    Description: Atleast two existing Subnets in separate Availability Zones your
+      Virtual Private Cloud (VPC)
+    Type: List<AWS::EC2::Subnet::Id>
+Conditions:
+  IOPSStorageType:
+    !Equals
+    - !Ref DBStorageType
+    - io1
+  IsDBMultiAZ:
+    !Equals
+    - !Ref DBMultiAZ
+    - 'true'
+Resources:
+  AuroraDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets available for the Amazon Aurora DB Instance
+      SubnetIds: !Ref Subnets
+  AuroraDBCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      DatabaseName: !Ref DBName
+      Engine: aurora-postgresql
+      MasterUsername: !Ref DBMasterUsername
+      MasterUserPassword: !Ref DBMasterUserPassword
+      BackupRetentionPeriod: !Ref DBBackupRetentionPeriod
+      DBSubnetGroupName: !Ref AuroraDBSubnetGroup
+      DBClusterParameterGroupName: default.aurora-postgresql9.6
+      VpcSecurityGroupIds:
+      - !Ref RDSSecurityGroup
+      Tags:
+      - Key: Name
+        Value: !Sub AuroraDB-${AWS::StackName}
+  AuroraDB1:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: aurora-postgresql
+      DBClusterIdentifier: !Ref AuroraDBCluster
+      DBInstanceClass: !Ref DBInstanceClass
+      AutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
+      Iops:
+        !If
+        - IOPSStorageType
+        - !Ref DBIops
+        - !Ref AWS::NoValue
+      Tags:
+      - Key: Name
+        Value: !Sub AuroraDB-${AWS::StackName}
+  AuroraDB2:
+    Type: AWS::RDS::DBInstance
+    Condition: IsDBMultiAZ
+    Properties:
+      Engine: aurora-postgresql
+      DBClusterIdentifier: !Ref AuroraDBCluster
+      DBInstanceClass: !Ref DBInstanceClass
+      AutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
+      Iops:
+        !If
+        - IOPSStorageType
+        - !Ref DBIops
+        - !Ref AWS::NoValue
+      Tags:
+      - Key: Name
+        Value: !Sub AuroraDB-${AWS::StackName}
+Outputs:
+  RDSEndPoints:
+    Description: Amazon Aurora Endpoint to connect
+    Value: !Sub ${AuroraDBCluster.Endpoint.Address}:${AuroraDBCluster.Endpoint.Port}/${DBName}
+  DBName:
+    Description: Amazon Aurora DBName
+    Value: !Ref DBName
+  RDSEndPointAddress:
+    Description: Amazon Aurora Endpoint to connect
+    Value: !Sub ${AuroraDBCluster.Endpoint.Address}
+  RDSEndPointPort:
+    Description: Amazon Aurora Endpoint to connect
+    Value: !Sub ${AuroraDBCluster.Endpoint.Port}
+...
