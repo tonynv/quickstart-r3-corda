@@ -1,6 +1,6 @@
 myLegalName : "O=__LEGALNAME__, L=__LOCATION__, C=__COUNTRYCODE__"
 p2pAddress : "__IPADDRESS__:10002"
-compatibilityZoneURL : "https://testnet.corda.network"
+compatibilityZoneURL : "__CZURL__"
 rpcSettings = {
         address : "__IPADDRESS__:10003"
         adminAddress : "__IPADDRESS__:10004"
