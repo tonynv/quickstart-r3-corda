@@ -2,27 +2,25 @@ myLegalName : "O=__LEGALNAME__, L=__LOCATION__, C=__COUNTRYCODE__"
 p2pAddress : "__IPADDRESS__:10002"
 compatibilityZoneURL : "__CZURL__"
 rpcSettings = {
-        address : "__IPADDRESS__:10003"
-        adminAddress : "__IPADDRESS__:10004"
-        standAloneBroker = false
-        useSsl = false
-    }
+    address : "__IPADDRESS__:10003"
+    adminAddress : "__IPADDRESS__:10004"
+    standAloneBroker = false
+    useSsl = false
+}
 baseDirectory : "/opt/corda"
 emailAddress : "__EMAILADDRESS__"
 keyStorePassword : "corda"
 trustStorePassword : "trustpass"
-devMode : true
 jarDirs = ["plugins", "cordapps"]
 rpcUsers=[
     {
         user=corda
-        password=corda_is_awesome
+        password=corda
         permissions=[
             ALL
         ]
     }
 ]
-webAddress : "0.0.0.0:8080"
 dataSourceProperties = {
     dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource"
     dataSource.url = "__DATASOURCE_URL__"
