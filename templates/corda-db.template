@@ -20,7 +20,6 @@ Metadata:
           - LegalName
           - KeyPairName
           - CordaAccessCIDR
-          - CordaWebserverCIDR
           - InstanceType
       - Label:
           default: Corda RDS Configuration
@@ -67,8 +66,6 @@ Metadata:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
         default: Allowed Corda Access CIDR
-      CordaWebserverCIDR:
-        default: Allowed Corda WebServer Access CIDR
       VPCID:
         default: VPC ID
       VPCCIDR:
@@ -289,12 +286,6 @@ Parameters:
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for Corda access
     Type: String
-  CordaWebserverCIDR:
-    AllowedPattern: >-
-      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: Allowed CIDR block for Corda webserver access
-    Type: String
   VPCID:
     Description: 'ID of the VPC (e.g., vpc-0343606e)'
     Type: 'AWS::EC2::VPC::Id'
@@ -368,10 +359,6 @@ Resources:
           FromPort: '10003'
           ToPort: '10003'
           CidrIp: !Ref CordaAccessCIDR
-        - IpProtocol: tcp
-          FromPort: '8080'
-          ToPort: '8080'
-          CidrIp: !Ref CordaWebserverCIDR
         - IpProtocol: icmp
           FromPort: '-1'
           ToPort: '-1'
@@ -419,6 +406,10 @@ Resources:
         DBMasterUserPassword: !Ref DBMasterUserPassword
         DBMultiAZ: !Ref DBMultiAZ
         DBStorageType: !Ref DBStorageType
+  EIP:
+    Type: "AWS::EC2::EIP"
+    Properties:
+      InstanceId: !Ref CordaInstance
   CordaInstance:
     Type: 'AWS::EC2::Instance'
     Metadata:
@@ -526,9 +517,14 @@ Resources:
             sed -i "s/__EMAILADDRESS__/${EmailAddress}/g" /opt/corda/node.conf
             sed -i "s/__LEGALNAME__/${LegalName}/g" /opt/corda/node.conf
             sed -i "s/__IPADDRESS__/$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)/g" /opt/corda/node.conf
+            # Add RDS
+            sed -i "s,__DATASOURCE_URL__,${RDSStack.Outputs.RDSEndPoints},g" /opt/corda/node.conf
+            sed -i "s,__DATASOURCE_USER__,${DBMasterUsername},g" /opt/corda/node.conf
+            sed -i "s,__DATASOURCE_PASSWORD__,${DBMasterUserPassword},g" /opt/corda/node.conf
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
           - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
+            RDSEndPointUrl: !GetAtt RDSStack.Outputs.RDSEndPoints
 Outputs:
   CordaInstancePublicDnsName:
     Value: !GetAtt

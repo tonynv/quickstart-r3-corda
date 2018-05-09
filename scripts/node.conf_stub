@@ -24,3 +24,14 @@
     "useTestClock" : true,
     "webAddress" : "0.0.0.0:8080"
 }
+    dataSourceProperties = {
+       dataSourceClassName = "org.postgresql.ds.PGSimpleDataSource",
+       dataSource.url = "__DATASOURCE_URL__",
+       dataSource.user = __DATASOURCE_USER__",
+       dataSource.password = "__DATASOURCE_PASSWORD__",
+    }
+    database = {
+    transactionIsolationLevel = READ_COMMITTED
+    schema = banka
+    runMigration = true
+    }

@@ -317,6 +317,7 @@ Resources:
             - s3
       Parameters:
         CordaWebserverCIDR: !Ref CordaWebserverCIDR
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         EmailAddress: !Ref EmailAddress
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
@@ -326,10 +327,9 @@ Resources:
         PublicSubnet2ID: !Ref PublicSubnet2ID
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         VPCCIDR: !Ref VPCCIDR
         VPCID: !Ref VPCID
-  CordaStack:
+  CordaDBStack:
     DependsOn: CordaWebServerStack
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -342,8 +342,8 @@ Resources:
             - s3-us-gov-west-1
             - s3
       Parameters:
-        CordaAccessCIDR: !Ref RemoteAccessCIDR
-        CordaWebserverCIDR: !Ref CordaWebserverCIDR
+        CordaAccessCIDR: !Ref CordaAccessCIDR
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         DBAllocatedStorage: !Ref DBAllocatedStorage
         DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
         DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod
@@ -364,6 +364,5 @@ Resources:
         PublicSubnet2ID: !Ref PublicSubnet2ID
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         VPCCIDR: !Ref VPCCIDR
         VPCID: !Ref VPCID
