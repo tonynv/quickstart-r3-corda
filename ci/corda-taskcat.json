@@ -24,6 +24,10 @@
         "ParameterValue": "quickstart-r3-corda/"
     },
     {
+        "ParameterKey": "OneTimeKey",
+        "ParameterValue": "onetimekey"
+    },
+    {
         "ParameterKey": "RemoteAccessCIDR",
         "ParameterValue": "0.0.0.0/0"
     },

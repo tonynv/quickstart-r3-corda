@@ -22,6 +22,7 @@ Metadata:
           - InstanceType
           - KeyPairName
           - LegalName
+          - OneTimeKey
       - Label:
           default: Corda RDS Configuration
         Parameters:
@@ -45,6 +46,8 @@ Metadata:
         default: Email address
       LegalName:
         default: Legal name
+      OneTimeKey:
+        default: One Time Key
       PublicSubnet1CIDR:
         default: Public Subnet 1 CIDR
       PublicSubnet2CIDR:
@@ -98,13 +101,16 @@ Parameters:
       your selections is preserved.
     Type: 'List<AWS::EC2::AvailabilityZone::Name>'
   EmailAddress:
-   Description: Email address
-   Type: String
-   AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
-   ConstraintDescription: Must be a valid email address.
+    Description: Email address
+    Type: String
+    AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
+    ConstraintDescription: Must be a valid email address.
   LegalName:
-   Description: Legal Name
-   Type: String
+    Description: Legal Name
+    Type: String
+  OneTimeKey:
+    Description: OneTimeKey
+    Type: String
   KeyPairName:
     Description: The name of an existing public/private key pair, which allows you to
       securely connect to your instance after it launches
@@ -355,6 +361,7 @@ Resources:
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
         LegalName: !Ref LegalName
+        OneTimeKey: !Ref OneTimeKey
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
         PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
         PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
