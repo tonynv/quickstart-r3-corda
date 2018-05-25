@@ -213,7 +213,7 @@ Resources:
             S3URI=https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}
             echo \'[Cloning: Load QuickStart Common Utils]\'
             #Once Repo is public (Use quickstart-linux-utilities submodue)
-            git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
+            git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git
             source /quickstart-linux-utilities/quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
