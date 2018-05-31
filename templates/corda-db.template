@@ -511,7 +511,7 @@ Resources:
             NODE_CONF=${!S3URI}scripts/node.conf_stub
             echo \'[Cloning: Load QuickStart Common Utils]\'
             #Once Repo is public (Use quickstart-linux-utilities submodue)
-            git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git
+            git clone develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
             source /quickstart-linux-utilities/quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
