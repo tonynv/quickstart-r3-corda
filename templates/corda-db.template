@@ -390,6 +390,12 @@ Resources:
                 Action:
                   - 'ec2:DescribeInstances'
                 Resource: '*'
+  Cordainstanceprofile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref Cordainstancerole
   CordaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
