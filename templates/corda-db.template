@@ -575,9 +575,12 @@ Resources:
             qs_bootstrap_pipa || qs_error
             qs_aws-cfn-bootstrap || qs_error
             qs_cloudwatch_install || qs_error
+            # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
             qs_cloudwatch_tracklog /var/log/cloud-init.log
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
+            # CFN Debug Logs
+            qs_cloudwatch_tracklog /opt/corda/logs/*log
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Generate node.conf
             wget ${!NODE_CONF} -O /opt/corda/node.conf
