@@ -574,14 +574,17 @@ Resources:
             qs_update-os || qs_error
             qs_bootstrap_pipa || qs_error
             qs_aws-cfn-bootstrap || qs_error
+            # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
+            sed -i "s/__LOGGROUP__/${CordaLogGroup}/g" cloudwatch_logs.stub
             qs_cloudwatch_install || qs_error
             # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
             qs_cloudwatch_tracklog /var/log/cloud-init.log
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
-            # CFN Debug Logs
-            qs_cloudwatch_tracklog /opt/corda/logs/*log
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
+            # Corda Logs
+            CORDA_LOG=$(/bin/ls /opt/corda/logs/*log)
+            qs_cloudwatch_tracklog $CORDA_LOG
             # Generate node.conf
             wget ${!NODE_CONF} -O /opt/corda/node.conf
             sed -i "s/__EMAILADDRESS__/${EmailAddress}/g" /opt/corda/node.conf
