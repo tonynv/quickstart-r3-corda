@@ -540,6 +540,7 @@ Resources:
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
+      IamInstanceProfile: !Ref Cordainstanceprofile
       UserData: !Base64
         Fn::Sub:
           - |
