@@ -541,6 +541,12 @@ Resources:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
       IamInstanceProfile: !Ref Cordainstanceprofile
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'AWS::StackName'
+              - 'CordaNode'
       UserData: !Base64
         Fn::Sub:
           - |
