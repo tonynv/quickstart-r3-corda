@@ -348,6 +348,11 @@ Conditions:
     - !Ref AWS::Region
     - us-gov-west-1
 Resources:
+  CordaLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: Corda-Logs
+      RetentionInDays: 7
   CordaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
