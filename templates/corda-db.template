@@ -566,13 +566,18 @@ Resources:
             NODE_CONF=${!S3URI}scripts/node.conf_stub
             echo \'[Cloning: Load QuickStart Common Utils]\'
             #Once Repo is public (Use quickstart-linux-utilities submodue)
-            git clone develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
-            source /quickstart-linux-utilities/quickstart-cfn-tools.source
+            git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
+            cd /quickstart-linux-utilities
+            source quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
             qs_update-os || qs_error
             qs_bootstrap_pipa || qs_error
             qs_aws-cfn-bootstrap || qs_error
+            qs_cloudwatch_install || qs_error
+            qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
+            qs_cloudwatch_tracklog /var/log/cloud-init.log
+            qs_cloudwatch_tracklog /var/log/cloud-init-output.log
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Generate node.conf
             wget ${!NODE_CONF} -O /opt/corda/node.conf
