@@ -361,12 +361,18 @@ Resources:
               nfs-common: []
           commands:
             01_createdir:
-              command: !Sub "mkdir -p /opt/corda/tmp/sharedfs"
+              command: !Sub "mkdir -p /opt/corda/sharedfs"
             02_mountfs:
-              command: !Sub >
-                mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/tmp/sharedfs
-            02_permissions:
-              command: !Sub "chown ec2-user:ec2-user /opt/corda/tmp/sharedfs"
+              command: !Sub "mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/sharedfs"
+            03_create_artemis_on_sharedfs:
+              command: !Sub "mkdir /opt/corda/sharedfs/artemis"
+            04_create_drivers_on_sharedfs:
+              command: !Sub "mkdir /opt/corda/sharedfs/drivers"
+            05_link__artemis_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/artemis /opt/corda/artemis"
+            06_link_drivers_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/drivers"
+
         systemd_config-corda:
           files:
             /etc/systemd/system/corda.service:
