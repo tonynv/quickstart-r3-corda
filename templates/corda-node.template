@@ -243,6 +243,16 @@ Resources:
       FileSystemTags:
       - Key: Name
         Value: 'CordaEFS'
+  MountTargetSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPCID
+      GroupDescription: Security group for mount target
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '2049'
+        ToPort: '2049'
+        CidrIp: !Ref VPCCIDR
   CordaLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
