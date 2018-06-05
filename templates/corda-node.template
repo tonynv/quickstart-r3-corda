@@ -253,6 +253,20 @@ Resources:
         FromPort: '2049'
         ToPort: '2049'
         CidrIp: !Ref VPCCIDR
+  MountTargetS1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SubnetId: !Ref 'PrivateSubnet1ID'
+      SecurityGroups:
+      - Ref: MountTargetSecurityGroup
+  MountTargetS2:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SubnetId: !Ref 'PrivateSubnet2ID'
+      SecurityGroups:
+      - Ref: MountTargetSecurityGroup
   CordaLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
