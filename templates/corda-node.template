@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Node, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6ci1)'
+Description: 'Corda Infrastructure - Corda Node, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6ci1)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -347,6 +347,7 @@ Resources:
       'AWS::CloudFormation::Init':
         configSets:
           corda_install:
+            - mount_sharedfs
             - corda_jar
             - run_install
             - systemd_config-corda
@@ -354,6 +355,18 @@ Resources:
             - run_service-corda
             - run_service-corda-webserver
             - run_corda-log-collection
+        mount_sharedfs:
+          packages:
+            apt:
+              nfs-common: []
+          commands:
+            01_createdir:
+              command: !Sub "mkdir -p /opt/corda/tmp/sharedfs"
+            02_mountfs:
+              command: !Sub >
+                mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/tmp/sharedfs
+            02_permissions:
+              command: !Sub "chown ec2-user:ec2-user /opt/corda/tmp/sharedfs"
         systemd_config-corda:
           files:
             /etc/systemd/system/corda.service:
@@ -457,7 +470,7 @@ Resources:
             NODE_CONF=${!S3URI}scripts/node.conf_stub
             echo \'[Cloning: Load QuickStart Common Utils]\'
             #Once Repo is public (Use quickstart-linux-utilities submodue)
-            git clone -b develop https://github.com/aws-quickstart/quickstart-linux-utilities.git
+            until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git ; do echo "Retring";done
             cd /quickstart-linux-utilities
             source quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
