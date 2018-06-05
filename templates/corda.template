@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Infrastructure - Main, License: Apache 2.0 (Please do not remove) May,1,2018 (qs-1odje6cib)'
+Description: 'Corda Infrastructure - Workload, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6cib)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -272,28 +272,6 @@ Parameters:
     Default: gp2
     Description: The storage type associated with this database instance
     Type: String
-  QSS3BucketName:
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: >-
-      Quick Start bucket name can include numbers, lowercase letters, uppercase
-      letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Default: aws-quickstart
-    Description: >-
-      S3 bucket name for the Quick Start assets. Quick Start bucket name can
-      include numbers, lowercase letters, uppercase letters, and hyphens (-). It
-      cannot start or end with a hyphen (-).
-    Type: String
-  QSS3KeyPrefix:
-    AllowedPattern: '^[0-9a-zA-Z-/]*$'
-    ConstraintDescription: >-
-      Quick Start key prefix can include numbers, lowercase letters, uppercase
-      letters, hyphens (-), and forward slash (/).
-    Default: quickstart-linux-bastion/
-    Description: >-
-      S3 key prefix for the Quick Start assets. Quick Start key prefix can
-      include numbers, lowercase letters, uppercase letters, hyphens (-), and
-      forward slash (/).
-    Type: String
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -333,32 +311,45 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         VPCCIDR: !Ref VPCCIDR
         VPCID: !Ref VPCID
-  CordaDBStack:
-    DependsOn: CordaWebServerStack
+  RDSStack:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL:
         Fn::Sub:
-        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/corda-db.template
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/rds.template
         - QSS3Region:
             Fn::If:
             - GovCloudCondition
             - s3-us-gov-west-1
             - s3
       Parameters:
-        CordaAccessCIDR: !Ref CordaAccessCIDR
-        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         DBAllocatedStorage: !Ref DBAllocatedStorage
         DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
         DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod
         DBInstanceClass: !Ref DBInstanceClass
-        DBIops: !Ref DBIops
-        DBMasterUserPassword: !Ref DBMasterUserPassword
-        DBMasterUsername: !Ref DBMasterUsername
-        DBMultiAZ: !Ref DBMultiAZ
         DBName: !Ref DBName
+        DBIops: !Ref DBIops
+        DBMasterUsername: !Ref DBMasterUsername
+        DBMasterUserPassword: !Ref DBMasterUserPassword
+        DBMultiAZ: !Ref DBMultiAZ
         DBStorageType: !Ref DBStorageType
+        Subnets: !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
+        VPCID: !Ref VPCID
+  CordaNodeStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL:
+        Fn::Sub:
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/corda-node.template
+        - QSS3Region:
+            Fn::If:
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      Parameters:
         EmailAddress: !Ref EmailAddress
+        CordaAccessCIDR: !Ref CordaAccessCIDR
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
         LegalName: !Ref LegalName
@@ -371,3 +362,6 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         VPCCIDR: !Ref VPCCIDR
         VPCID: !Ref VPCID
+        DBMasterUsername: !Ref DBMasterUsername
+        DBMasterUserPassword: !Ref DBMasterUserPassword
+        RDSEndPoint: !GetAtt RDSStack.Outputs.RDSEndPoints

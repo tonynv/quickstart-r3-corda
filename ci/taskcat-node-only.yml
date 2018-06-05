@@ -21,7 +21,7 @@ global:
 
 tests:
   corda:
-    parameter_input: corda-taskcat-invpc.json
-    template_file: corda.template
+    parameter_input: taskcat-node-only.json
+    template_file: corda-node.template
     regions:
       - us-west-2

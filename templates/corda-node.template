@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Node, License: Apache 2.0 (Please do not remove) May,1,2018 (qs-1odje6ci1)'
+Description: 'Corda Node, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6ci1)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -23,18 +23,11 @@ Metadata:
           - CordaAccessCIDR
           - InstanceType
       - Label:
-          default: Corda RDS Configuration
+          default: Data Base Configuration
         Parameters:
-          - DBInstanceClass
-          - DBName
-          - DBMultiAZ
           - DBMasterUsername
           - DBMasterUserPassword
-          - DBAllocatedStorage
-          - DBStorageType
-          - DBIops
-          - DBAutoMinorVersionUpgrade
-          - DBBackupRetentionPeriod
+          - RDSEndPoint
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -61,6 +54,12 @@ Metadata:
         default: Public subnet 1 CIDR
       PublicSubnet2CIDR:
         default: Public subnet 2 CIDR
+      RDSEndPoint:
+        default: RDS Endpoint
+      DBMasterUsername:
+        default: DB Master Username
+      DBMasterUserPassword:
+        default: DB Master User Password
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
       QSS3KeyPrefix:
@@ -73,26 +72,6 @@ Metadata:
         default: VPC ID
       VPCCIDR:
         default: VPC CIDR
-      DBAllocatedStorage:
-        default: DB storage size (in GiB)
-      DBAutoMinorVersionUpgrade:
-        default: Automatic upgrade to new Amazon Aurora/MySQL minor versions
-      DBBackupRetentionPeriod:
-        default: DB backup retention period
-      DBInstanceClass:
-        default: Amazon Aurora/MySQL DB instance type
-      DBIops:
-        default: DB IOPS
-      DBMasterUserPassword:
-        default: DB master password
-      DBMasterUsername:
-        default: DB master user name
-      DBMultiAZ:
-        default: Enable Multi-AZ deployment for DB instance
-      DBName:
-        default: DB name
-      DBStorageType:
-        default: DB storage type
 Parameters:
   EmailAddress:
     Description: Email address
@@ -103,24 +82,32 @@ Parameters:
     Description: Legal Name
     MaxLength: 128
     Type: String
+  RDSEndPoint:
+    Description: RDSEndPoint
+    Type: String
+  DBMasterUserPassword:
+    Description: DBMasterUserPassword
+    Type: String
+  DBMasterUsername:
+    Description: DBMasterUsername
+    Type: String
   OneTimeKey:
     Description: One Time Key
-    MaxLength: 128
     Type: String
   InstanceType:
     AllowedValues:
-      - t2.nano
-      - t2.micro
-      - t2.small
-      - t2.medium
-      - t2.large
-      - m3.large
-      - m3.xlarge
-      - m3.2xlarge
-      - m4.large
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
+       - t2.nano
+       - t2.micro
+       - t2.small
+       - t2.medium
+       - t2.large
+       - m3.large
+       - m3.xlarge
+       - m3.2xlarge
+       - m4.large
+       - m4.xlarge
+       - m4.2xlarge
+       - m4.4xlarge
     Default: t2.micro
     Description: Amazon EC2 instance type for the bastion instances
     Type: String
@@ -159,105 +146,6 @@ Parameters:
     ConstraintDescription: Must be a valid IP range in x.x.x.x/x notation
     Default: 10.0.144.0/20
     Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2
-    Type: String
-  DBAllocatedStorage:
-    ConstraintDescription: Must be between 5 and 4096 GiB. If Iops specified, AllocatedStorage
-      must be at least 100 GiB and with minimum Iops value of 1000
-    Default: '16'
-    Description: The size of the database in gigabytes (GiB)
-    MaxValue: '4096'
-    MinValue: '5'
-    Type: Number
-  DBAutoMinorVersionUpgrade:
-    AllowedValues:
-    - 'true'
-    - 'false'
-    Default: 'true'
-    Description: Select true/false to setup Auto Minor Version upgrade
-    Type: String
-  DBBackupRetentionPeriod:
-    Default: '7'
-    Description: The number of days for which automatic DB snapshots are retained.
-    Type: String
-  DBEngineType:
-    AllowedValues:
-    - Amazon Aurora
-    - MySQL
-    Default: Amazon Aurora
-    Description: Database engine to use for Corda database
-    Type: String
-  DBInstanceClass:
-    AllowedValues:
-    - db.r4.large
-    - db.r4.xlarge
-    - db.r4.2xlarge
-    - db.r4.4xlarge
-    - db.r4.8xlarge
-    - db.r4.16xlarge
-    ConstraintDescription: Must select a valid postgress database instance type.
-    Default: db.r4.large
-    Description: The name of the compute and memory capacity class of the DB instance.
-    Type: String
-  DBIops:
-    AllowedValues:
-    - '1000'
-    - '2000'
-    - '3000'
-    - '4000'
-    - '5000'
-    - '6000'
-    - '7000'
-    - '8000'
-    - '9000'
-    - '10000'
-    ConstraintDescription: '1000 Iops min and increased in 1K increments. '
-    Default: '1000'
-    Description: DB Iops. Used only when io1 specified for the StorageType property
-    Type: Number
-  DBMasterUserPassword:
-    AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
-    ConstraintDescription: Must be at least 8 characters containing letters, numbers
-      and symbols.
-    Description: The database admin account password. Must be at least 8 characters
-      containing letters, numbers and symbols
-    MaxLength: '32'
-    MinLength: '8'
-    NoEcho: 'True'
-    Type: String
-  DBMasterUsername:
-    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
-    ConstraintDescription: Must begin with a letter and contain only alphanumeric
-      characters.
-    Default: aurorapg
-    Description: The database admin account username
-    MaxLength: '16'
-    MinLength: '1'
-    NoEcho: 'true'
-    Type: String
-  DBMultiAZ:
-    AllowedValues:
-    - 'true'
-    - 'false'
-    Default: 'true'
-    Description: Specifies if the database instance is a multiple Availability Zone
-      deployment.
-    Type: String
-  DBName:
-    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
-    ConstraintDescription: Must begin with a letter and contain only alphanumeric
-      characters.
-    Default: CordaQuickstartDB
-    Description: Name of Corda Quick Start database.
-    MaxLength: '64'
-    MinLength: '5'
-    Type: String
-  DBStorageType:
-    AllowedValues:
-    - standard
-    - gp2
-    - io1
-    Default: gp2
-    Description: The storage type associated with this database instance
     Type: String
   QSS3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
@@ -418,49 +306,6 @@ Resources:
           FromPort: '-1'
           ToPort: '-1'
           CidrIp: !Ref RemoteAccessCIDR
-  RDSSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow access to MySQL Port (AWS Quick Start)
-      VpcId: !Ref VPCID
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '3306'
-          ToPort: '3306'
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: 0.0.0.0/0
-  RDSStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL:
-        Fn::Sub:
-        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/rds.template
-        - QSS3Region:
-            Fn::If:
-            - GovCloudCondition
-            - s3-us-gov-west-1
-            - s3
-      Parameters:
-        RDSSecurityGroup: !Ref RDSSecurityGroup
-        Subnets: !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
-        DBAllocatedStorage: !Ref DBAllocatedStorage
-        DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
-        DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod
-        DBInstanceClass: !Ref DBInstanceClass
-        DBName: !Ref DBName
-        DBIops: !Ref DBIops
-        DBMasterUsername: !Ref DBMasterUsername
-        DBMasterUserPassword: !Ref DBMasterUserPassword
-        DBMultiAZ: !Ref DBMultiAZ
-        DBStorageType: !Ref DBStorageType
   EIP:
     Type: "AWS::EC2::EIP"
     Properties:
@@ -477,6 +322,7 @@ Resources:
             - systemd_config-corda-webserver
             - run_service-corda
             - run_service-corda-webserver
+            - run_corda-log-collection
         systemd_config-corda:
           files:
             /etc/systemd/system/corda.service:
@@ -526,6 +372,20 @@ Resources:
           commands:
             start_corda-weberver :
               command: systemctl start corda-webserver.service
+        run_corda-log-collection:
+          files:
+            /home/ubuntu/corda-node-logs.sh:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda-node-logs.sh
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000755'
+              owner: root
+              group: root
+          commands:
+            setup-cw-logs :
+              command: bash /home/ubuntu/corda-node-logs.sh
     Properties:
       KeyName: !Ref KeyPairName
       ImageId: !FindInMap
@@ -582,16 +442,13 @@ Resources:
             qs_cloudwatch_tracklog /var/log/cloud-init.log
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
-            # Corda Logs
-            CORDA_LOG=$(/bin/ls /opt/corda/logs/*log)
-            qs_cloudwatch_tracklog $CORDA_LOG
             # Generate node.conf
             wget ${!NODE_CONF} -O /opt/corda/node.conf
             sed -i "s/__EMAILADDRESS__/${EmailAddress}/g" /opt/corda/node.conf
             sed -i "s/__LEGALNAME__/${LegalName}/g" /opt/corda/node.conf
             sed -i "s/__IPADDRESS__/$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)/g" /opt/corda/node.conf
             # Add RDS
-            sed -i "s,__DATASOURCE_URL__,${RDSStack.Outputs.RDSEndPoints},g" /opt/corda/node.conf
+            sed -i "s,__DATASOURCE_URL__,${RDSEndPoint},g" /opt/corda/node.conf
             sed -i "s,__DATASOURCE_USER__,${DBMasterUsername},g" /opt/corda/node.conf
             sed -i "s,__DATASOURCE_PASSWORD__,${DBMasterUserPassword},g" /opt/corda/node.conf
 
@@ -600,7 +457,6 @@ Resources:
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
           - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
-            RDSEndPointUrl: !GetAtt RDSStack.Outputs.RDSEndPoints
 Outputs:
   CordaInstancePublicDnsName:
     Value: !GetAtt
@@ -610,4 +466,3 @@ Outputs:
   CordaInstancePublicIPAddress:
     Value: !Sub 'ubuntu@${CordaInstance.PublicIp}'
     Description: Public IP address for the Corda instance
-

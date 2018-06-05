@@ -1,0 +1,90 @@
+[
+    {
+        "ParameterKey": "CordaAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "gI1yW9zD6"
+    },
+    {
+        "ParameterKey": "DBMasterUsername",
+        "ParameterValue": "aurorapg"
+    },
+    {
+        "ParameterKey": "EmailAddress",
+        "ParameterValue": "none@none.com"
+    },
+    {
+        "ParameterKey": "InstanceType",
+        "ParameterValue": "t2.large"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "tonynv"
+    },
+    {
+        "ParameterKey": "LegalName",
+        "ParameterValue": "Taskcat Test"
+    },
+    {
+        "ParameterKey": "OneTimeKey",
+        "ParameterValue": "onetimekey"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1CIDR",
+        "ParameterValue": "10.0.0.0/19"
+    },
+    {
+        "ParameterKey": "PrivateSubnet1ID",
+        "ParameterValue": "subnet-0ac8304418377ca7c"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2CIDR",
+        "ParameterValue": "10.0.32.0/19"
+    },
+    {
+        "ParameterKey": "PrivateSubnet2ID",
+        "ParameterValue": "subnet-01f60395b79d3ccbd"
+    },
+    {
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.0.128.0/20"
+    },
+    {
+        "ParameterKey": "PublicSubnet1ID",
+        "ParameterValue": "subnet-0e06530ad25131eb3"
+    },
+    {
+        "ParameterKey": "PublicSubnet2CIDR",
+        "ParameterValue": "10.0.144.0/20"
+    },
+    {
+        "ParameterKey": "PublicSubnet2ID",
+        "ParameterValue": "subnet-0aa18639852b83e71"
+    },
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-r3-corda/"
+    },
+    {
+        "ParameterKey": "RDSEndPoint",
+        "ParameterValue": "tcat-tag-corda-56b79838-cordastac-auroradbcluster-jkrzikagt44h.cluster-cqkx5uin33n9.us-west-2.rds.amazonaws.com:3306/CordaQuickstartDB"
+    },
+    {
+        "ParameterKey": "RemoteAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "VPCCIDR",
+        "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "VPCID",
+        "ParameterValue": "vpc-0fee3a473bac1c4a0"
+    }
+]
