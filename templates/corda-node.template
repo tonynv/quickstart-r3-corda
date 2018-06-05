@@ -14,7 +14,7 @@ Metadata:
           - PrivateSubnet2ID
           - RemoteAccessCIDR
       - Label:
-          default: Corda EC2 Configuration
+          default: Corda Configuration
         Parameters:
           - EmailAddress
           - LegalName
@@ -23,7 +23,7 @@ Metadata:
           - CordaAccessCIDR
           - InstanceType
       - Label:
-          default: Data Base Configuration
+          default: Corda Database Configuration
         Parameters:
           - DBMasterUsername
           - DBMasterUserPassword
@@ -236,6 +236,13 @@ Conditions:
     - !Ref AWS::Region
     - us-gov-west-1
 Resources:
+  FileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      PerformanceMode: generalPurpose
+      FileSystemTags:
+      - Key: Name
+        Value: 'CordaEFS'
   CordaLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
