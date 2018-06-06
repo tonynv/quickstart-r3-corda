@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Corda Infrastructure - AWS Aurora (MultiAZ Postgress DB), License: Apache 2.0 (Please do not remove) May,1,2018 (qs-1odje6cih)'
+Description: 'Corda Infrastructure - Database, AWS Aurora (MultiAZ Postgress DB), License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6cih)'
 Parameters:
   DBAllocatedStorage:
     ConstraintDescription: must be between 5 and 4096 GiB. If Iops specified, AllocatedStorage
@@ -88,14 +88,14 @@ Parameters:
     Default: standard
     Description: The storage type associated with this database instance
     Type: String
-  RDSSecurityGroup:
-    Description: Amazon Aurora Security Group
-    Type: AWS::EC2::SecurityGroup::Id
   Subnets:
     ConstraintDescription: must be list of existing subnet Ids
     Description: Atleast two existing Subnets in separate Availability Zones your
       Virtual Private Cloud (VPC)
     Type: List<AWS::EC2::Subnet::Id>
+  VPCID:
+    Description: 'ID of the VPC (e.g., vpc-0343606e)'
+    Type: 'AWS::EC2::VPC::Id'
 Conditions:
   IOPSStorageType:
     !Equals
@@ -106,6 +106,25 @@ Conditions:
     - !Ref DBMultiAZ
     - 'true'
 Resources:
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow access to MySQL Port (AWS Quick Start)
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
   AuroraDBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
