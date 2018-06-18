@@ -21,7 +21,7 @@ global:
 
 tests:
   corda:
-    parameter_input: corda-taskcat.json
+    parameter_input: taskcat.json
     template_file: corda-master.template
     regions:
       - us-west-2
