@@ -217,9 +217,9 @@ Resources:
             source /quickstart-linux-utilities/quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
-            qs_update-os || qs_error
-            qs_bootstrap_pipa || qs_error
-            qs_aws-cfn-bootstrap || qs_error
+            qs_update-os || qs_err
+            qs_bootstrap_pip || qs_err
+            qs_aws-cfn-bootstrap || qs_err
             cfn-init -v --stack ${AWS::StackName} --resource CordaWebServerLaunchConfig --configsets corda-webserver_install --region ${AWS::Region} || cfn_fail
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail

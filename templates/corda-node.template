@@ -481,12 +481,12 @@ Resources:
             source quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
-            qs_update-os || qs_error
-            qs_bootstrap_pipa || qs_error
-            qs_aws-cfn-bootstrap || qs_error
+            qs_update-os || qs_err
+            qs_bootstrap_pip || qs_err
+            qs_aws-cfn-bootstrap || qs_err
             # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
             sed -i "s/__LOGGROUP__/${CordaLogGroup}/g" cloudwatch_logs.stub
-            qs_cloudwatch_install || qs_error
+            qs_cloudwatch_install || qs_err
             # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
             qs_cloudwatch_tracklog /var/log/cloud-init.log
