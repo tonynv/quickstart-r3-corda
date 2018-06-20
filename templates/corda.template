@@ -17,7 +17,8 @@ Metadata:
           default: Corda EC2 Configuration
         Parameters:
           - EmailAddress
-          - LegalName
+          - Location
+          - CountryCode
           - OneTimeKey
           - KeyPairName
           - CordaAccessCIDR
@@ -43,9 +44,11 @@ Metadata:
           - QSS3KeyPrefix
     ParameterLabels:
       EmailAddress:
-        default: Email address
-      LegalName:
-        default: Legal name
+        default: Email Address
+      Location:
+        default: Location
+      CountryCode:
+        default: Country Code
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
       QSS3KeyPrefix:
@@ -92,8 +95,11 @@ Parameters:
     Type: String
     AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
     ConstraintDescription: Must be a valid email address.
-  LegalName:
-    Description: Legal Name
+  Location:
+    Description: Location
+    Type: String
+  CountryCode:
+    Description: CountryCode
     Type: String
   OneTimeKey:
     Description: One Time Key
@@ -352,7 +358,8 @@ Resources:
         RemoteAccessCIDR: !Ref RemoteAccessCIDR
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName
-        LegalName: !Ref LegalName
+        CountryCode: !Ref CountryCode
+        Location: !Ref Location
         OneTimeKey: !Ref OneTimeKey
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
         PrivateSubnet2ID: !Ref PrivateSubnet2ID
@@ -362,6 +369,7 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         VPCCIDR: !Ref VPCCIDR
         VPCID: !Ref VPCID
+        DBName: !Ref DBName
         DBMasterUsername: !Ref DBMasterUsername
         DBMasterUserPassword: !Ref DBMasterUserPassword
         RDSEndPoint: !GetAtt RDSStack.Outputs.RDSEndPoints

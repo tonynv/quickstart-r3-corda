@@ -4,8 +4,12 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
-        "ParameterKey": "LegalName",
-        "ParameterValue": "Some Name"
+        "ParameterKey": "CountryCode",
+        "ParameterValue": "GB"
+    },
+    {
+        "ParameterKey": "Location",
+        "ParameterValue": "London"
     },
     {
         "ParameterKey": "EmailAddress",

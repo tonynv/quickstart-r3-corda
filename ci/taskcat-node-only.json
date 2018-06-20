@@ -24,8 +24,12 @@
         "ParameterValue": "taskcat"
     },
     {
-        "ParameterKey": "LegalName",
-        "ParameterValue": "Taskcat Test"
+        "ParameterKey": "CountryCode",
+        "ParameterValue": "UK"
+    },
+    {
+        "ParameterKey": "Location",
+        "ParameterValue": "London"
     },
     {
         "ParameterKey": "OneTimeKey",
