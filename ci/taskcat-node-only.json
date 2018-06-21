@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "gI1yW9zD6"
+        "ParameterValue": "$[taskcat_genpass_8A]"
     },
     {
         "ParameterKey": "DBMasterUsername",
@@ -25,7 +25,7 @@
     },
     {
         "ParameterKey": "CountryCode",
-        "ParameterValue": "UK"
+        "ParameterValue": "GB"
     },
     {
         "ParameterKey": "Location",
