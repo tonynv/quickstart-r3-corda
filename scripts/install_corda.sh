@@ -5,7 +5,7 @@ set -euo pipefail
 # Parameters
 
 IP_ADDRESS="${1:-0.0.0.0}"
-COUNTRY_CODE="$(echo "${2:-UK}" | sed 's/[^A-Za-z]//g')"
+COUNTRY_CODE="$(echo "${2:-GB}" | sed 's/[^A-Za-z]//g')"
 LOCATION="$(echo "${3:-London}" | sed 's/[^A-Za-z -]//g')"
 DB_URL="${4:-}"
 DB_SCHEMA="public"
@@ -22,7 +22,7 @@ NODE_CONFIG_FILE="/opt/corda/node.conf"
 TESTNET_URL="https://cces.corda.r3cev.com"
 
 PLATFORM="AWS"
-DISTRO="ENT"
+DISTRO="ENTERPRISE"
 
 DRIVER_FILE="postgresql-42.2.2.jar"
 DRIVER_URL="https://jdbc.postgresql.org/download/$DRIVER_FILE"
@@ -87,11 +87,10 @@ log "Installed JDBC database driver '$DRIVER_FILE'"
 
 # Download configuration, identity, truststore and binaries
 
-log "Retrieving configuration file, identity, truststore and binaries from '$TESTNET_URL' ..."
+log "Retrieving configuration file, identity, truststore and binaries from '$TESTNET_URL' for distribution '$DISTRO' ..."
 
-# TODO: Incorporate $DISTRO when supported by endpoint
 sudo curl -L -s \
-    -d "{\"x500Name\":{\"locality\":\"$LOCATION\",\"country\":\"$COUNTRY_CODE\"},\"configType\":\"$PLATFORM\"}" \
+    -d "{\"x500Name\":{\"locality\":\"$LOCATION\",\"country\":\"$COUNTRY_CODE\"},\"configType\":\"$PLATFORM\",\"distribution\":\"$DISTRO\"}" \
     -H "Content-Type: application/json" \
     -X POST "$TESTNET_URL/api/user/node/generate/one-time-key/redeem/$ONE_TIME_DOWNLOAD_KEY" \
     -o "$INSTALL_DIR/corda.zip" || error "Unable to download config template and truststore"
@@ -102,9 +101,10 @@ log "Unpacking distribution ..."
 
 sudo unzip /opt/corda/corda.zip 2> /dev/null || error "Unable to unzip generated node bundle; was the correct one time download key used?"
 
-log "Setting permissions to certificates directory ..."
+log "Setting permissions for node directories ..."
 
 sudo chown -R corda:corda certificates
+sudo chown -R corda:corda cordapps
 
 log "Patching configuration file ..."
 
