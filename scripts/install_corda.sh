@@ -108,7 +108,8 @@ sudo chown -R corda:corda cordapps
 log "Patching configuration file ..."
 
 ESC_DB_URL="$(echo "$DB_URL" | sed 's#/#\\/#g')"
-sudo sed -i "s/__IPADDRESS__/$IP_ADDRESS/g" "$NODE_CONFIG_FILE" || error "Failed to set IP address in config"
+sudo sed -i "s/__IPADDRESS__/0.0.0.0/g" "$NODE_CONFIG_FILE" || error "Failed to set RPC IP address in config"
+sudo sed -i "/p2p/s/0.0.0.0/$IP_ADDRESS/g" "$NODE_CONFIG_FILE" || error "Failed to set P2P IP address in config"
 sudo sed -i "s/__DATASOURCE_URL__/jdbc:postgresql:\/\/$ESC_DB_URL/g" "$NODE_CONFIG_FILE" || error "Failed to set database URL in config"
 sudo sed -i "s/__DATASOURCE_USER__/$DB_USER/g" "$NODE_CONFIG_FILE" || error "Failed to set database username in config"
 sudo sed -i "s/__DATASOURCE_PASSWORD__/$DB_PWD/g" "$NODE_CONFIG_FILE" || error "Failed to set database password in config"
