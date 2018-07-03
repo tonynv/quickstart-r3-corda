@@ -40,6 +40,10 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
+        "ParameterKey": "CordaRPCAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
         "ParameterKey": "CordaWebserverCIDR",
         "ParameterValue": "0.0.0.0/0"
     },

@@ -22,6 +22,7 @@ Metadata:
           - OneTimeKey
           - KeyPairName
           - CordaAccessCIDR
+          - CordaRPCAccessCIDR
           - CordaWebserverCIDR
           - InstanceType
       - Label:
@@ -57,6 +58,8 @@ Metadata:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
         default: Allowed Corda Access
+      CordaRPCAccessCIDR:
+        default: Allowed Corda RPC Access CIDR
       CordaWebserverCIDR:
         default: Allowed Corda WebServer Access CIDR
       KeyPairName:
@@ -148,6 +151,12 @@ Parameters:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for Corda access
+    Type: String
+  CordaRPCAccessCIDR:
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for Corda RPC access
     Type: String
   CordaWebserverCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
@@ -355,6 +364,7 @@ Resources:
       Parameters:
         EmailAddress: !Ref EmailAddress
         CordaAccessCIDR: !Ref CordaAccessCIDR
+        CordaRPCAccessCIDR: !Ref CordaRPCAccessCIDR
         RemoteAccessCIDR: !Ref RemoteAccessCIDR
         InstanceType: !Ref InstanceType
         KeyPairName: !Ref KeyPairName

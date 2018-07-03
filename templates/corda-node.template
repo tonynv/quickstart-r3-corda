@@ -22,6 +22,7 @@ Metadata:
           - OneTimeKey
           - KeyPairName
           - CordaAccessCIDR
+          - CordaRPCAccessCIDR
           - InstanceType
       - Label:
           default: Corda Database Configuration
@@ -71,6 +72,8 @@ Metadata:
         default: Allowed SSH Access CIDR
       CordaAccessCIDR:
         default: Allowed Corda Access CIDR
+      CordaRPCAccessCIDR:
+        default: Allowed Corda RPC Access CIDR
       VPCID:
         default: VPC ID
       VPCCIDR:
@@ -188,6 +191,12 @@ Parameters:
       ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for Corda access
+    Type: String
+  CordaRPCAccessCIDR:
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for Corda RPC access
     Type: String
   VPCID:
     Description: 'ID of the VPC (e.g., vpc-0343606e)'
@@ -340,7 +349,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: '10003'
           ToPort: '10003'
-          CidrIp: !Ref CordaAccessCIDR
+          CidrIp: !Ref CordaRPCAccessCIDR
         - IpProtocol: icmp
           FromPort: '-1'
           ToPort: '-1'
@@ -374,11 +383,15 @@ Resources:
               command: !Sub "mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/sharedfs"
             03_create_artemis_on_sharedfs:
               command: !Sub "mkdir -p /opt/corda/sharedfs/artemis"
-            04_create_drivers_on_sharedfs:
+            04_create_cordapps_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/cordapps"
+            05_create_drivers_on_sharedfs:
               command: !Sub "mkdir -p /opt/corda/sharedfs/drivers"
-            05_link__artemis_on_sharedfs:
+            06_link_artemis_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/artemis /opt/corda/artemis"
-            06_link_drivers_on_sharedfs:
+            07_link_cordapps_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/cordapps /opt/corda/cordapps"
+            08_link_drivers_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/drivers"
 
         systemd_config-corda:
@@ -430,7 +443,8 @@ Resources:
                   "${RDSEndPoint}" \
                   "${DBMasterUsername}" \
                   "${DBMasterUserPassword}" \
-                  "${OneTimeKey}"
+                  "${OneTimeKey}" \
+                  "${RPCAddress}"
               - CountryCode: !Ref CountryCode
                 Location: !Ref Location
                 RDSEndPoint: !Ref RDSEndPoint
@@ -438,6 +452,7 @@ Resources:
                 DBMasterUsername: !Ref DBMasterUsername
                 DBMasterUserPassword: !Ref DBMasterUserPassword
                 OneTimeKey: !Ref OneTimeKey
+                RPCAddress: !Ref CordaRPCAccessCIDR
         run_service-corda:
           commands:
             start_corda :
