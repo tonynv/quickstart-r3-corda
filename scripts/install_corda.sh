@@ -71,10 +71,7 @@ log "Installing Corda into '$INSTALL_DIR' ..."
 
 sudo adduser --system --no-create-home --group corda
 sudo mkdir -p "$INSTALL_DIR"
-sudo chown corda:corda "$INSTALL_DIR"
-sudo mkdir -p "$INSTALL_DIR/cordapps"
 sudo mkdir -p "$INSTALL_DIR/certificates"
-sudo mkdir -p "$INSTALL_DIR/drivers"
 cd "$INSTALL_DIR"
 
 # Download and install database driver JAR
@@ -103,8 +100,7 @@ sudo unzip /opt/corda/corda.zip 2> /dev/null || error "Unable to unzip generated
 
 log "Setting permissions for node directories ..."
 
-sudo chown -R corda:corda certificates
-sudo chown -R corda:corda cordapps
+sudo chown -R corda:corda "$INSTALL_DIR"
 
 log "Patching configuration file ..."
 
