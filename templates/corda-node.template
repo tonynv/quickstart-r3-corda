@@ -209,35 +209,35 @@ Parameters:
 Mappings:
   AWSAMIRegionMap:
     AMI:
-      US1604HVM: 945595563132/corda-enterprise-v3
+      US1604HVM: 945595563132/corda-enterprise-v3-20180703
     ap-northeast-1:
-      US1604HVM: ami-0903500751ba0edc2
+      US1604HVM: ami-0d6804e34b72bdb1a
     ap-northeast-2:
-      US1604HVM: ami-029aab3c89e7bf1ea
+      US1604HVM: ami-03f51d57ba4a80fac
     ap-south-1:
-      US1604HVM: ami-006107a317a4a4ca3
+      US1604HVM: ami-04b897f7dd25963a1
     ap-southeast-1:
-      US1604HVM: ami-067ecc7bb9cf4e1ae
+      US1604HVM: ami-0aa219e42b7e369a7
     ap-southeast-2:
-      US1604HVM: ami-024c6617d0e32f53f
+      US1604HVM: ami-095ca9a11b1d9d12b
     ca-central-1:
-      US1604HVM: ami-05df00013aa25d230
+      US1604HVM: ami-01c2e570c18ad925b
     eu-central-1:
-      US1604HVM: ami-0824cc1447332761d
+      US1604HVM: ami-0fdc09c802789fd24
     eu-west-1:
-      US1604HVM: ami-063cf18e730f6db7d
+      US1604HVM: ami-0f0e07e46d8e42240
     eu-west-2:
-      US1604HVM: ami-0585974b426f03399
+      US1604HVM: ami-04fb91bfdfb668249
     sa-east-1:
-      US1604HVM: ami-073c9cbb07caf33ac
+      US1604HVM: ami-04f068003f9277ad2
     us-east-1:
-      US1604HVM: ami-015633b02a9f46773
+      US1604HVM: ami-067640bb7c944eca3
     us-east-2:
-      US1604HVM: ami-04d6e909b71ae2a45
+      US1604HVM: ami-0a4435b0709d8de6a
     us-west-1:
-      US1604HVM: ami-0359c2dedbeabf6b3
+      US1604HVM: ami-04da6c571105f9dcb
     us-west-2:
-      US1604HVM: ami-0e1793ecb205d65f3
+      US1604HVM: ami-0c46a447c28ab6b48
 Rules:
   SubnetsInVPC:
     Assertions:
