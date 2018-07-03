@@ -387,12 +387,16 @@ Resources:
               command: !Sub "mkdir -p /opt/corda/sharedfs/cordapps"
             05_create_drivers_on_sharedfs:
               command: !Sub "mkdir -p /opt/corda/sharedfs/drivers"
-            06_link_artemis_on_sharedfs:
+            06_create_plugins_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/plugins"
+            07_link_artemis_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/artemis /opt/corda/artemis"
-            07_link_cordapps_on_sharedfs:
+            08_link_cordapps_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/cordapps /opt/corda/cordapps"
-            08_link_drivers_on_sharedfs:
+            09_link_drivers_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/drivers"
+            10_link_plugins_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/plugins"
 
         systemd_config-corda:
           files:
