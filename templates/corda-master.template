@@ -9,7 +9,6 @@ Metadata:
           - AvailabilityZones
           - CordaAccessCIDR
           - CordaRPCAccessCIDR
-          - CordaWebserverCIDR
           - NumberOfAZs
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
@@ -67,8 +66,6 @@ Metadata:
         default: Allowed Corda Ports CIDR
       CordaRPCAccessCIDR:
         default: Allowed Corda RPC Access CIDR
-      CordaWebserverCIDR:
-        default: Allowed Corda WebServer Access CIDR
       KeyPairName:
         default: SSH Key Name
       InstanceType:
@@ -178,11 +175,6 @@ Parameters:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for Corda RPC access
-    Type: String
-  CordaWebserverCIDR:
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: Allowed CIDR block for Corda webserver access
     Type: String
   DBAllocatedStorage:
     ConstraintDescription: Must be between 5 and 4096 GiB. If Iops specified, AllocatedStorage
@@ -343,7 +335,6 @@ Resources:
       Parameters:
         CordaAccessCIDR: !Ref RemoteAccessCIDR
         CordaRPCAccessCIDR: !Ref CordaRPCAccessCIDR
-        CordaWebserverCIDR: !Ref CordaWebserverCIDR
         DBAllocatedStorage: !Ref DBAllocatedStorage
         DBAutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade
         DBBackupRetentionPeriod: !Ref DBBackupRetentionPeriod

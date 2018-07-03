@@ -368,9 +368,7 @@ Resources:
             - corda_jar
             - run_install
             - systemd_config-corda
-            - systemd_config-corda-webserver
             - run_service-corda
-            - run_service-corda-webserver
             - run_corda-log-collection
         mount_sharedfs:
           packages:
@@ -404,17 +402,6 @@ Resources:
               source: !Sub
                 - >-
                   https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda.service
-                - QSS3BucketName: !Ref QSS3BucketName
-                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
-              mode: '000664'
-              owner: root
-              group: root
-        systemd_config-corda-webserver:
-          files:
-            /etc/systemd/system/corda-webserver.service:
-              source: !Sub
-                - >-
-                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda-webserver.service
                 - QSS3BucketName: !Ref QSS3BucketName
                   QSS3KeyPrefix: !Ref QSS3KeyPrefix
               mode: '000664'
@@ -461,10 +448,6 @@ Resources:
           commands:
             start_corda :
               command: systemctl start corda.service
-        run_service-corda-webserver:
-          commands:
-            start_corda-weberver :
-              command: systemctl start corda-webserver.service
         run_corda-log-collection:
           files:
             /home/ubuntu/corda-node-logs.sh:
