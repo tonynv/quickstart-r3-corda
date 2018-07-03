@@ -4,7 +4,7 @@ set -euo pipefail
 
 # Parameters
 
-IP_ADDRESS="${1:-0.0.0.0}"
+IP_ADDRESS="${1:-}"
 COUNTRY_CODE="$(echo "${2:-GB}" | sed 's/[^A-Za-z]//g')"
 LOCATION="$(echo "${3:-London}" | sed 's/[^A-Za-z -]//g')"
 DB_URL="${4:-}"
@@ -12,6 +12,7 @@ DB_SCHEMA="public"
 DB_USER="${5:-CordaUser}"     # Constrained by template
 DB_PWD="${6:-}"               # Constrained by template
 ONE_TIME_DOWNLOAD_KEY="$(echo "${7:-}" | sed 's/[^A-Za-z0-9-]//g')"
+RPC_IP="$(echo "${8:-}" | sed 's#/.*$##')"
 
 # Constants
 
@@ -70,10 +71,7 @@ log "Installing Corda into '$INSTALL_DIR' ..."
 
 sudo adduser --system --no-create-home --group corda
 sudo mkdir -p "$INSTALL_DIR"
-sudo chown corda:corda "$INSTALL_DIR"
-sudo mkdir -p "$INSTALL_DIR/cordapps"
 sudo mkdir -p "$INSTALL_DIR/certificates"
-sudo mkdir -p "$INSTALL_DIR/drivers"
 cd "$INSTALL_DIR"
 
 # Download and install database driver JAR
@@ -102,13 +100,14 @@ sudo unzip /opt/corda/corda.zip 2> /dev/null || error "Unable to unzip generated
 
 log "Setting permissions for node directories ..."
 
-sudo chown -R corda:corda certificates
-sudo chown -R corda:corda cordapps
+sudo chown -R corda:corda "$INSTALL_DIR"
 
 log "Patching configuration file ..."
 
 ESC_DB_URL="$(echo "$DB_URL" | sed 's#/#\\/#g')"
-sudo sed -i "s/__IPADDRESS__/$IP_ADDRESS/g" "$NODE_CONFIG_FILE" || error "Failed to set IP address in config"
+sudo sed -i "/p2pAddress/s/__IPADDRESS__/$IP_ADDRESS/g" "$NODE_CONFIG_FILE" || error "Failed to set P2P IP address in config"
+sudo sed -i "/address/s/__IPADDRESS__/$RPC_IP/g" "$NODE_CONFIG_FILE" || error "Failed to set RPC IP address in config"
+sudo sed -i "/adminAddress/s/__IPADDRESS__/$RPC_IP/g" "$NODE_CONFIG_FILE" || error "Failed to set RPC admin IP address in config"
 sudo sed -i "s/__DATASOURCE_URL__/jdbc:postgresql:\/\/$ESC_DB_URL/g" "$NODE_CONFIG_FILE" || error "Failed to set database URL in config"
 sudo sed -i "s/__DATASOURCE_USER__/$DB_USER/g" "$NODE_CONFIG_FILE" || error "Failed to set database username in config"
 sudo sed -i "s/__DATASOURCE_PASSWORD__/$DB_PWD/g" "$NODE_CONFIG_FILE" || error "Failed to set database password in config"
