@@ -259,7 +259,10 @@ Resources:
       PerformanceMode: generalPurpose
       FileSystemTags:
       - Key: Name
-        Value: 'CordaEFS'
+        Value: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - 'CordaEFS'
   MountTargetSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -287,7 +290,10 @@ Resources:
   CordaLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
-      LogGroupName: Corda-Logs
+      LogGroupName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - 'CordaLogs'
       RetentionInDays: 7
   CordaInstanceRole:
     Type: 'AWS::IAM::Role'
