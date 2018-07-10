@@ -289,7 +289,7 @@ Resources:
     Properties:
       LogGroupName: Corda-Logs
       RetentionInDays: 7
-  Cordainstancerole:
+  CordaInstanceRole:
     Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
@@ -326,12 +326,12 @@ Resources:
                 Action:
                   - 'ec2:DescribeInstances'
                 Resource: '*'
-  Cordainstanceprofile:
+  CordaInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
       Path: /
       Roles:
-        - !Ref Cordainstancerole
+        - !Ref CordaInstanceRole
   CordaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -476,7 +476,7 @@ Resources:
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
-      IamInstanceProfile: !Ref Cordainstanceprofile
+      IamInstanceProfile: !Ref CordaInstanceProfile
       Tags:
         - Key: Name
           Value: !Join
