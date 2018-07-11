@@ -368,12 +368,10 @@ Resources:
           FromPort: '-1'
           ToPort: '-1'
           CidrIp: !Ref RemoteAccessCIDR
-  EIP:
-    Type: "AWS::EC2::EIP"
-    Properties:
-      InstanceId: !Ref CordaInstance
   CordaInstance:
     Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - FileSystem
     Metadata:
       'AWS::CloudFormation::Init':
         configSets:
@@ -441,7 +439,7 @@ Resources:
               command: !Sub
               - >-
                 bash /home/ubuntu/install-node.sh \
-                  "$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)" \
+                  "${P2PAddress}" \
                   "${CountryCode}" \
                   "${Location}" \
                   "${RDSEndPoint}" \
@@ -449,7 +447,10 @@ Resources:
                   "${DBMasterUserPassword}" \
                   "${OneTimeKey}" \
                   "${RPCAddress}"
-              - CountryCode: !Ref CountryCode
+              - P2PAddress: !GetAtt
+                  - P2PLoadBalancer
+                  - DNSName
+                CountryCode: !Ref CountryCode
                 Location: !Ref Location
                 RDSEndPoint: !Ref RDSEndPoint
                 DBName: !Ref DBName
@@ -597,7 +598,7 @@ Resources:
               command: !Sub
               - >-
                 bash /home/ubuntu/install-node.sh \
-                  "$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)" \
+                  "${P2PAddress}" \
                   "${CountryCode}" \
                   "${Location}" \
                   "${RDSEndPoint}" \
@@ -605,7 +606,10 @@ Resources:
                   "${DBMasterUserPassword}" \
                   "${OneTimeKey}" \
                   "${RPCAddress}"
-              - CountryCode: !Ref CountryCode
+              - P2PAddress: !GetAtt
+                  - P2PLoadBalancer
+                  - DNSName
+                CountryCode: !Ref CountryCode
                 Location: !Ref Location
                 RDSEndPoint: !Ref RDSEndPoint
                 DBName: !Ref DBName
@@ -691,6 +695,58 @@ Resources:
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
           - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
+  P2PLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancing::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1ID
+        - !Ref PublicSubnet2ID
+      # TODO: Instances:
+      #   - !Ref CordaInstance
+      #   - !Ref CordaColdInstance
+      Listeners:
+        - LoadBalancerPort: 10002
+          InstancePort: 10002
+          Protocol: TCP
+          InstanceProtocol: TCP
+      HealthCheck:
+        Target: TCP:10002
+        HealthyThreshold: 3
+        UnhealthyThreshold: 5
+        Interval: 30
+        Timeout: 5
+      Tags:
+        - Key: name
+          Value: !Join
+            - '-'
+            - - 'Corda-Node-P2P-ELB'
+              - !Ref 'AWS::StackName'
+  RPCLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancing::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1ID
+        - !Ref PublicSubnet2ID
+      # TODO: Instances:
+      #   - !Ref CordaInstance
+      #   - !Ref CordaColdInstance
+      Listeners:
+        - LoadBalancerPort: 10003
+          InstancePort: 10003
+          Protocol: TCP
+          InstanceProtocol: TCP
+      HealthCheck:
+        Target: TCP:10003
+        HealthyThreshold: 3
+        UnhealthyThreshold: 5
+        Interval: 30
+        Timeout: 5
+      Tags:
+        - Key: name
+          Value: !Join
+            - '-'
+            - - 'Corda-Node-RPC-ELB'
+              - !Ref 'AWS::StackName'
 Outputs:
   CordaInstancePublicDnsName:
     Value: !GetAtt
@@ -702,6 +758,16 @@ Outputs:
       - CordaColdInstance
       - PublicDnsName
     Description: Public DNS name for the cold Corda instance
+  P2PDnsName:
+    Value: !GetAtt
+      - P2PLoadBalancer
+      - DNSName
+    Description: Public DNS name for the P2P load balancer
+  RPCDnsName:
+    Value: !GetAtt
+      - RPCLoadBalancer
+      - DNSName
+    Description: Public DNS name for the RPC load balancer
   CordaInstancePublicIPAddress:
     Value: !Sub 'ubuntu@${CordaInstance.PublicIp}'
     Description: Public IP address for the Corda instance
