@@ -94,6 +94,10 @@ sudo curl -L -s \
 
 log "Distribution bundle stored to '$INSTALL_DIR/corda.zip'"
 
+log "Copying distribution bundle to file share ..."
+
+cp "$INSTALL_DIR/corda.zip" "/opt/corda/sharedfs/"
+
 log "Unpacking distribution ..."
 
 sudo unzip /opt/corda/corda.zip 2> /dev/null || error "Unable to unzip generated node bundle; was the correct one time download key used?"

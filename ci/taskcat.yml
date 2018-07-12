@@ -18,4 +18,4 @@ tests:
     parameter_input: taskcat.json
     template_file: corda-master.template
     regions:
-      - us-west-2
+      - us-west-1
