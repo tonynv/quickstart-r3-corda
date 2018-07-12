@@ -349,7 +349,7 @@ Resources:
   CordaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Enables SSH Access
+      GroupDescription: Enables P2P, RPC and SSH access
       VpcId: !Ref VPCID
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -648,7 +648,7 @@ Resources:
             VolumeSize: '100'
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
-      SubnetId: !Ref PublicSubnet1ID
+      SubnetId: !Ref PublicSubnet2ID
       IamInstanceProfile: !Ref CordaInstanceProfile
       Tags:
         - Key: Name
@@ -715,6 +715,8 @@ Resources:
         UnhealthyThreshold: 5
         Interval: 30
         Timeout: 5
+      SecurityGroups:
+        - !Ref CordaSecurityGroup
       Tags:
         - Key: name
           Value: !Join
@@ -741,6 +743,8 @@ Resources:
         UnhealthyThreshold: 5
         Interval: 30
         Timeout: 5
+      SecurityGroups:
+        - !Ref CordaSecurityGroup
       Tags:
         - Key: name
           Value: !Join
