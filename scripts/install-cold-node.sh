@@ -13,6 +13,9 @@ DB_USER="${5:-CordaUser}"     # Constrained by template
 DB_PWD="${6:-}"               # Constrained by template
 ONE_TIME_DOWNLOAD_KEY="$(echo "${7:-}" | sed 's/[^A-Za-z0-9-]//g')"
 RPC_IP="$(echo "${8:-}" | sed 's#/.*$##')"
+P2P_LOAD_BALANCER="${9:-}"
+RPC_LOAD_BALANCER="${10:-}"
+REGION="${11:-}"
 
 # Constants
 
@@ -53,18 +56,6 @@ fi
 
 log "Using one time download key '${ONE_TIME_DOWNLOAD_KEY}' ..."
 
-# Install dependencies
-
-log "Updating package manager cache ..."
-
-sudo apt-get update -yqq
-
-log "Installing dependencies ..."
-
-sudo apt-get install -yqq \
-    apt-transport-https ca-certificates curl software-properties-common \
-    openjdk-8-jdk unzip
-
 # Set up Corda installation directory
 
 log "Installing Corda into '$INSTALL_DIR' ..."
@@ -83,6 +74,17 @@ download "$DRIVER_URL" "drivers/$DRIVER_FILE"
 log "Installed JDBC database driver '$DRIVER_FILE'"
 
 # Retrieve configuration, identity, truststore and binaries
+
+log "Waiting for distribution bundle '$INSTALL_DIR/corda.zip' to become available ..."
+
+while true; do
+    if [ -f "/opt/corda/sharedfs/bundle-available" ]; then
+        break
+    else
+        echo "Waiting ..."
+        sleep 10
+    fi
+done
 
 log "Copying distribution bundle from file share to '$INSTALL_DIR/corda.zip' ..."
 
@@ -110,5 +112,12 @@ sudo sed -i "s/^[ ]*\"extraAdvertisedServiceIds\".*$//" "$NODE_CONFIG_FILE" || e
 sudo sed -i "s/^[ ]*\"webAddress\".*$//" "$NODE_CONFIG_FILE" || error "Failed to remove 'webAddress' config"
 
 log "Node configuration completed"
+
+INSTANCE_ID="$(wget -q -O - http://169.254.169.254/latest/meta-data/instance-id)"
+log "Add instance $INSTANCE_ID to load balancer $P2P_LOAD_BALANCER ..."
+aws elb register-instances-with-load-balancer --load-balancer-name "$P2P_LOAD_BALANCER" --instances "$INSTANCE_ID" --region "$REGION"
+log "Add instance $INSTANCE_ID to load balancer $RPC_LOAD_BALANCER ..."
+aws elb register-instances-with-load-balancer --load-balancer-name "$RPC_LOAD_BALANCER" --instances "$INSTANCE_ID" --region "$REGION"
+log "Instance added to load balancers"
 
 log "Installation successfully completed"
