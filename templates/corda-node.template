@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Infrastructure - Corda Node, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6ci1)'
+Description: 'Corda Infrastructure - Corda Node, License: Apache 2.0 (Please do not remove) June, 2018 (qs-1odje6ci1)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -16,7 +16,6 @@ Metadata:
       - Label:
           default: Corda Configuration
         Parameters:
-          - EmailAddress
           - Location
           - CountryCode
           - OneTimeKey
@@ -36,16 +35,14 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
-      EmailAddress:
-        default: Email Address
       Location:
-        default: Location
+        default: City
       CountryCode:
-        default: Country Code
+        default: Country code
       OneTimeKey:
-        default: One Time Key
+        default: One-time key
       KeyPairName:
-        default: Key Pair Name
+        default: Key pair name
       PublicSubnet1ID:
         default: Public Subnet 1 ID
       PublicSubnet2ID:
@@ -59,51 +56,49 @@ Metadata:
       PublicSubnet2CIDR:
         default: Public Subnet 2 CIDR
       RDSEndPoint:
-        default: RDS Endpoint
+        default: Database endpoint
       DBMasterUsername:
-        default: DB Master Username
+        default: Database master username
       DBMasterUserPassword:
-        default: DB Master User Password
+        default: Database master password
       QSS3BucketName:
-        default: Quick Start S3 Bucket Name
+        default: Quick Start S3 bucket name
       QSS3KeyPrefix:
-        default: Quick Start S3 Key Prefix
+        default: Quick Start S3 key prefix
       RemoteAccessCIDR:
-        default: Allowed SSH Access CIDR
+        default: Allowed SSH access CIDR
       CordaAccessCIDR:
-        default: Allowed Corda Access CIDR
+        default: Allowed Corda access CIDR
       CordaRPCAccessCIDR:
-        default: Allowed Corda RPC Access CIDR
+        default: Allowed Corda RPC access CIDR
       VPCID:
         default: VPC ID
       VPCCIDR:
         default: VPC CIDR
 Parameters:
-  EmailAddress:
-    Description: Email Address
-    Type: String
-    AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
-    ConstraintDescription: Must be a valid email address.
   CountryCode:
-    Description: Country Code
+    Description: The ISO 3166-1 alpha-2 code of the country to which the node is
+      associated. This does not need to be where the node is physically located.
     Type: String
   Location:
-    Description: Location
+    Description: The city or location to which the node is associated. This does not
+      need to be where the node is physically located.
     Type: String
   RDSEndPoint:
-    Description: RDS Endpoint
+    Description: Database endpoint
     Type: String
   DBMasterUserPassword:
-    Description: Database Master Password
+    Description: Database master password
     Type: String
   DBMasterUsername:
-    Description: Database Master Username
+    Description: Database master username
     Type: String
   DBName:
-    Description: Database Name
+    Description: Database name
     Type: String
   OneTimeKey:
-    Description: One Time Key
+    Description: The one-time key that you received when you created a new node on
+      Corda Testnet (code valid for 1 hour).
     Type: String
   InstanceType:
     AllowedValues:
@@ -119,24 +114,24 @@ Parameters:
        - m4.xlarge
        - m4.2xlarge
        - m4.4xlarge
-    Default: t2.micro
-    Description: Amazon EC2 instance type for the bastion instances
+    Default: t2.large
+    Description: Amazon EC2 instance type for the Corda instances
     Type: String
   KeyPairName:
-    Description: Enter a Public/private key pair. If you do not have one in this region,
+    Description: Enter a public/private key pair. If you do not have one in this region,
       please create it before continuing
     Type: 'AWS::EC2::KeyPair::KeyName'
   PrivateSubnet1ID:
-    Description: Private Subnet Id 1
+    Description: ID of the private Subnet in Availability Zone 1
     Type: AWS::EC2::Subnet::Id
   PrivateSubnet2ID:
-    Description: Private Subnet Id 2
+    Description: ID of the private Subnet in Availability Zone 2
     Type: AWS::EC2::Subnet::Id
   PublicSubnet1ID:
-    Description: Public Subnet Id 1
+    Description: ID of the public Subnet in Availability Zone 1
     Type: AWS::EC2::Subnet::Id
   PublicSubnet2ID:
-    Description: Public Subnet Id 2
+    Description: ID of the public Subnet in Availability Zone 2
     Type: AWS::EC2::Subnet::Id
   PrivateSubnet1CIDR:
     ConstraintDescription: Must be a valid IP range in x.x.x.x/x notation
