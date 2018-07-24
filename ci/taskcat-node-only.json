@@ -16,10 +16,6 @@
         "ParameterValue": "cordauser"
     },
     {
-        "ParameterKey": "EmailAddress",
-        "ParameterValue": "none@none.com"
-    },
-    {
         "ParameterKey": "InstanceType",
         "ParameterValue": "t2.large"
     },

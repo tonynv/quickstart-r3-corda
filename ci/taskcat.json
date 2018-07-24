@@ -12,10 +12,6 @@
         "ParameterValue": "London"
     },
     {
-        "ParameterKey": "EmailAddress",
-        "ParameterValue": "someone@somewhere.com"
-    },
-    {
         "ParameterKey": "KeyPairName",
         "ParameterValue": "taskcat"
     },
