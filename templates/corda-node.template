@@ -526,6 +526,9 @@ Resources:
           commands:
             setup-cw-logs :
               command: bash /home/ubuntu/node-logs.sh
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
     Properties:
       KeyName: !Ref KeyPairName
       ImageId: !FindInMap
@@ -575,6 +578,7 @@ Resources:
             qs_aws-cfn-bootstrap || qs_err
             # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
             sed -i "s/__LOGGROUP__/${CordaLogGroup}/g" cloudwatch_logs.stub
+            echo "Install CloudWatch agent"
             qs_cloudwatch_install || qs_err
             # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
@@ -582,6 +586,7 @@ Resources:
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
             qs_cloudwatch_tracklog /var/log/cfn-init.log
             qs_cloudwatch_tracklog /var/log/cfn-init-cmd.log
+            echo "Executing config-sets"
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
@@ -691,6 +696,9 @@ Resources:
           commands:
             setup-cw-logs :
               command: bash /home/ubuntu/node-logs.sh
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
     Properties:
       KeyName: !Ref KeyPairName
       ImageId: !FindInMap
@@ -740,6 +748,7 @@ Resources:
             qs_aws-cfn-bootstrap || qs_err
             # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
             sed -i "s/__LOGGROUP__/${ColdCordaLogGroup}/g" cloudwatch_logs.stub
+            echo "Install CloudWatch agent"
             qs_cloudwatch_install || qs_err
             # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
@@ -747,6 +756,7 @@ Resources:
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
             qs_cloudwatch_tracklog /var/log/cfn-init.log
             qs_cloudwatch_tracklog /var/log/cfn-init-cmd.log
+            echo "Executing config-sets"
             cfn-init -v --stack ${AWS::StackName} --resource CordaColdInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
