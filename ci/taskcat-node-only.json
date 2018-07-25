@@ -33,7 +33,7 @@
     },
     {
         "ParameterKey": "OneTimeKey",
-        "ParameterValue": "onetimekey"
+        "ParameterValue": "0000-0000-0000-0000-0000-0000"
     },
     {
         "ParameterKey": "PrivateSubnet1CIDR",
@@ -77,7 +77,7 @@
     },
     {
         "ParameterKey": "RDSEndPoint",
-        "ParameterValue": "corda-taskcat-test.ct6bi36q4wah.us-east-1.rds.amazonaws.com:5432/cordatest"
+        "ParameterValue": "some.endpoint.com:3306/cordatest"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -90,5 +90,9 @@
     {
         "ParameterKey": "VPCID",
         "ParameterValue": "vpc-0048cce9995fe8950"
+    },
+    {
+        "ParameterKey": "TestnetEndpoint",
+        "ParameterValue": "https://6fv37fh1yj.execute-api.us-east-1.amazonaws.com/stage"
     }
 ]

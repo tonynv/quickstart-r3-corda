@@ -25,7 +25,7 @@
     },
     {
         "ParameterKey": "OneTimeKey",
-        "ParameterValue": "onetimekey"
+        "ParameterValue": "0000-0000-0000-0000-0000-0000"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -50,5 +50,9 @@
     {
         "ParameterKey": "VPCCIDR",
         "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "TestnetEndpoint",
+        "ParameterValue": "https://6fv37fh1yj.execute-api.us-east-1.amazonaws.com/stage"
     }
 ]

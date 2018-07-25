@@ -19,6 +19,7 @@ Metadata:
           - Location
           - CountryCode
           - OneTimeKey
+          - TestnetEndpoint
           - KeyPairName
           - CordaAccessCIDR
           - CordaRPCAccessCIDR
@@ -48,6 +49,8 @@ Metadata:
         default: Country code
       OneTimeKey:
         default: One-time key
+      TestnetEndpoint:
+        default: Corda Testnet endpoint
       QSS3BucketName:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
@@ -108,6 +111,10 @@ Parameters:
   OneTimeKey:
     Description: The one-time key that you received when you created a new node on
       Corda Testnet (code valid for 1 hour).
+    Type: String
+  TestnetEndpoint:
+    Description: The base URL of Corda Testnet
+    Default: https://testnet.corda.network
     Type: String
   KeyPairName:
     Description: The name of an existing public/private key pair, which allows you to

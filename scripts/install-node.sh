@@ -80,7 +80,7 @@ log "Retrieving configuration file, identity, truststore and binaries from '$TES
 sudo curl -L -s \
     -d "{\"x500Name\":{\"locality\":\"$LOCATION\",\"country\":\"$COUNTRY_CODE\"},\"configType\":\"$PLATFORM\",\"distribution\":\"$DISTRO\"}" \
     -H "Content-Type: application/json" \
-    -X POST "$TESTNET_URL/api/user/node/generate/one-time-key/redeem/$ONE_TIME_DOWNLOAD_KEY" \
+    "$TESTNET_URL/api/user/node/generate/one-time-key/redeem/$ONE_TIME_DOWNLOAD_KEY" \
     -o "$INSTALL_DIR/corda.zip" || error "Unable to download config template and truststore"
 
 log "Distribution bundle stored to '$INSTALL_DIR/corda.zip'"
