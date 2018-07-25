@@ -347,6 +347,7 @@ Resources:
         CountryCode: !Ref CountryCode
         Location: !Ref Location
         OneTimeKey: !Ref OneTimeKey
+        TestnetEndpoint: !Ref TestnetEndpoint
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
         PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
         PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID

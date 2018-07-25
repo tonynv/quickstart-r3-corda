@@ -493,7 +493,8 @@ Resources:
                   "${RPCAddress}" \
                   "${P2PELB}" \
                   "${RPCELB}" \
-                  "${Region}"
+                  "${Region}" \
+                  "${TestnetEndpoint}"
               - P2PAddress: !GetAtt
                   - P2PLoadBalancer
                   - DNSName
@@ -508,6 +509,7 @@ Resources:
                 P2PELB: !Ref P2PLoadBalancer
                 RPCELB: !Ref RPCLoadBalancer
                 Region: !Ref 'AWS::Region'
+                TestnetEndpoint: !Ref TestnetEndpoint
         run-service-corda:
           commands:
             start_corda :
@@ -663,7 +665,8 @@ Resources:
                   "${RPCAddress}" \
                   "${P2PELB}" \
                   "${RPCELB}" \
-                  "${Region}"
+                  "${Region}" \
+                  "${TestnetEndpoint}"
               - P2PAddress: !GetAtt
                   - P2PLoadBalancer
                   - DNSName
@@ -678,6 +681,7 @@ Resources:
                 P2PELB: !Ref P2PLoadBalancer
                 RPCELB: !Ref RPCLoadBalancer
                 Region: !Ref 'AWS::Region'
+                TestnetEndpoint: !Ref TestnetEndpoint
         run-service-corda:
           commands:
             start_corda :

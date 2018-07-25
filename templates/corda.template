@@ -329,6 +329,7 @@ Resources:
         CountryCode: !Ref CountryCode
         Location: !Ref Location
         OneTimeKey: !Ref OneTimeKey
+        TestnetEndpoint: !Ref TestnetEndpoint
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
         PrivateSubnet2ID: !Ref PrivateSubnet2ID
         PublicSubnet1ID: !Ref PublicSubnet1ID

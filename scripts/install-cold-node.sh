@@ -16,13 +16,12 @@ RPC_IP="$(echo "${8:-}" | sed 's#/.*$##')"
 P2P_LOAD_BALANCER="${9:-}"
 RPC_LOAD_BALANCER="${10:-}"
 REGION="${11:-}"
+TESTNET_URL="${12:-https://testnet.corda.network}"
 
 # Constants
 
 INSTALL_DIR="/opt/corda"
 NODE_CONFIG_FILE="/opt/corda/node.conf"
-
-TESTNET_URL="https://testnet.corda.network"
 
 PLATFORM="AWS"
 DISTRO="ENTERPRISE"
