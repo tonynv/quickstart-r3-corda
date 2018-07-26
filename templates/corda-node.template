@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Infrastructure - Corda Node, License: Apache 2.0 (Please do not remove) June,2018 (qs-1odje6ci1)'
+Description: 'Corda Infrastructure - Corda Node, License: Apache 2.0 (Please do not remove) June, 2018 (qs-1odje6ci1)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -16,11 +16,13 @@ Metadata:
       - Label:
           default: Corda Configuration
         Parameters:
-          - EmailAddress
-          - LegalName
+          - Location
+          - CountryCode
           - OneTimeKey
+          - TestnetEndpoint
           - KeyPairName
           - CordaAccessCIDR
+          - CordaRPCAccessCIDR
           - InstanceType
       - Label:
           default: Corda Database Configuration
@@ -34,65 +36,76 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
-      EmailAddress:
-        default: Email address
-      LegalName:
-        default: Legal name
+      Location:
+        default: City
+      CountryCode:
+        default: Country code
       OneTimeKey:
-        default: One Time Key
+        default: One-time key
+      TestnetEndpoint:
+        default: Corda Testnet endpoint
       KeyPairName:
-        default: Key Pair Name
+        default: Key pair name
       PublicSubnet1ID:
         default: Public Subnet 1 ID
       PublicSubnet2ID:
         default: Public Subnet 2 ID
       PrivateSubnet1CIDR:
-        default: Private subnet 1 CIDR
+        default: Private Subnet 1 CIDR
       PrivateSubnet2CIDR:
-        default: Private subnet 2 CIDR
+        default: Private Subnet 2 CIDR
       PublicSubnet1CIDR:
-        default: Public subnet 1 CIDR
+        default: Public Subnet 1 CIDR
       PublicSubnet2CIDR:
-        default: Public subnet 2 CIDR
+        default: Public Subnet 2 CIDR
       RDSEndPoint:
-        default: RDS Endpoint
+        default: Database endpoint
       DBMasterUsername:
-        default: DB Master Username
+        default: Database master username
       DBMasterUserPassword:
-        default: DB Master User Password
+        default: Database master password
       QSS3BucketName:
-        default: Quick Start S3 Bucket Name
+        default: Quick Start S3 bucket name
       QSS3KeyPrefix:
-        default: Quick Start S3 Key Prefix
+        default: Quick Start S3 key prefix
       RemoteAccessCIDR:
-        default: Allowed SSH Access CIDR
+        default: Allowed SSH access CIDR
       CordaAccessCIDR:
-        default: Allowed Corda Access CIDR
+        default: Allowed Corda access CIDR
+      CordaRPCAccessCIDR:
+        default: Allowed Corda RPC access CIDR
       VPCID:
         default: VPC ID
       VPCCIDR:
         default: VPC CIDR
 Parameters:
-  EmailAddress:
-    Description: Email address
+  CountryCode:
+    Description: The ISO 3166-1 alpha-2 code of the country to which the node is
+      associated. This does not need to be where the node is physically located.
     Type: String
-    AllowedPattern: ([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)
-    ConstraintDescription: Must be a valid email address.
-  LegalName:
-    Description: Legal Name
-    MaxLength: 128
+  Location:
+    Description: The city or location to which the node is associated. This does not
+      need to be where the node is physically located.
     Type: String
   RDSEndPoint:
-    Description: RDSEndPoint
+    Description: Database endpoint
     Type: String
   DBMasterUserPassword:
-    Description: DBMasterUserPassword
+    Description: Database master password
     Type: String
   DBMasterUsername:
-    Description: DBMasterUsername
+    Description: Database master username
+    Type: String
+  DBName:
+    Description: Database name
     Type: String
   OneTimeKey:
-    Description: One Time Key
+    Description: The one-time key that you received when you created a new node on
+      Corda Testnet (code valid for 1 hour).
+    Type: String
+  TestnetEndpoint:
+    Description: The base URL of Corda Testnet
+    Default: https://testnet.corda.network
     Type: String
   InstanceType:
     AllowedValues:
@@ -108,24 +121,24 @@ Parameters:
        - m4.xlarge
        - m4.2xlarge
        - m4.4xlarge
-    Default: t2.micro
-    Description: Amazon EC2 instance type for the bastion instances
+    Default: t2.large
+    Description: Amazon EC2 instance type for the Corda instances
     Type: String
   KeyPairName:
-    Description: Enter a Public/private key pair. If you do not have one in this region,
+    Description: Enter a public/private key pair. If you do not have one in this region,
       please create it before continuing
     Type: 'AWS::EC2::KeyPair::KeyName'
   PrivateSubnet1ID:
-    Description: Private Subnet Id 1
+    Description: ID of the private Subnet in Availability Zone 1
     Type: AWS::EC2::Subnet::Id
   PrivateSubnet2ID:
-    Description: Private Subnet Id 2
+    Description: ID of the private Subnet in Availability Zone 2
     Type: AWS::EC2::Subnet::Id
   PublicSubnet1ID:
-    Description: Public Subnet Id 1
+    Description: ID of the public Subnet in Availability Zone 1
     Type: AWS::EC2::Subnet::Id
   PublicSubnet2ID:
-    Description: Public Subnet Id 2
+    Description: ID of the public Subnet in Availability Zone 2
     Type: AWS::EC2::Subnet::Id
   PrivateSubnet1CIDR:
     ConstraintDescription: Must be a valid IP range in x.x.x.x/x notation
@@ -181,6 +194,12 @@ Parameters:
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for Corda access
     Type: String
+  CordaRPCAccessCIDR:
+    AllowedPattern: >-
+      ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for Corda RPC access
+    Type: String
   VPCID:
     Description: 'ID of the VPC (e.g., vpc-0343606e)'
     Type: 'AWS::EC2::VPC::Id'
@@ -192,35 +211,35 @@ Parameters:
 Mappings:
   AWSAMIRegionMap:
     AMI:
-      US1604HVM: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20180405
+      CORDA: 945595563132/corda-enterprise-v3-20180719
     ap-northeast-1:
-      US1604HVM: ami-60a4b21c
+      CORDA: ami-056999ebc7da7e968
     ap-northeast-2:
-      US1604HVM: ami-633d920d
+      CORDA: ami-0f3eefe827826aa1f
     ap-south-1:
-      US1604HVM: ami-dba580b4
+      CORDA: ami-07c50c25dd47edc8e
     ap-southeast-1:
-      US1604HVM: ami-82c9ecfe
+      CORDA: ami-0c22e74caa4fa38b7
     ap-southeast-2:
-      US1604HVM: ami-2b12dc49
+      CORDA: ami-04be3a675e79291b6
     ca-central-1:
-      US1604HVM: ami-9d7afcf9
+      CORDA: ami-01a81adcaa0a7984a
     eu-central-1:
-      US1604HVM: ami-cd491726
+      CORDA: ami-06cd225c44ddfe278
     eu-west-1:
-      US1604HVM: ami-74e6b80d
+      CORDA: ami-00ef622bfffab8437
     eu-west-2:
-      US1604HVM: ami-506e8f37
+      CORDA: ami-0333318bf381350f3
     sa-east-1:
-      US1604HVM: ami-5782d43b
+      CORDA: ami-084f6ac751413f599
     us-east-1:
-      US1604HVM: ami-6dfe5010
+      CORDA: ami-0c8f772682b612d23
     us-east-2:
-      US1604HVM: ami-e82a1a8d
+      CORDA: ami-0f82a65db65e630f2
     us-west-1:
-      US1604HVM: ami-493f2f29
+      CORDA: ami-0c3a43ce7009e77c4
     us-west-2:
-      US1604HVM: ami-ca89eeb2
+      CORDA: ami-03bfb534bf11f4351
 Rules:
   SubnetsInVPC:
     Assertions:
@@ -242,7 +261,10 @@ Resources:
       PerformanceMode: generalPurpose
       FileSystemTags:
       - Key: Name
-        Value: 'CordaEFS'
+        Value: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - 'CordaEFS'
   MountTargetSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -270,9 +292,20 @@ Resources:
   CordaLogGroup:
     Type: 'AWS::Logs::LogGroup'
     Properties:
-      LogGroupName: Corda-Logs
+      LogGroupName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - 'Corda1-Logs'
       RetentionInDays: 7
-  Cordainstancerole:
+  ColdCordaLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Join
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - 'Corda2-Logs'
+      RetentionInDays: 7
+  CordaInstanceRole:
     Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
@@ -309,16 +342,20 @@ Resources:
                 Action:
                   - 'ec2:DescribeInstances'
                 Resource: '*'
-  Cordainstanceprofile:
+              - Effect: Allow
+                Action:
+                  - 'elasticloadbalancing:RegisterInstancesWithLoadBalancer'
+                Resource: '*'
+  CordaInstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
       Path: /
       Roles:
-        - !Ref Cordainstancerole
+        - !Ref CordaInstanceRole
   CordaSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Enables SSH Access
+      GroupDescription: Enables P2P, RPC and SSH access
       VpcId: !Ref VPCID
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -332,30 +369,64 @@ Resources:
         - IpProtocol: tcp
           FromPort: '10003'
           ToPort: '10003'
-          CidrIp: !Ref CordaAccessCIDR
+          CidrIp: !Ref CordaRPCAccessCIDR
         - IpProtocol: icmp
           FromPort: '-1'
           ToPort: '-1'
           CidrIp: !Ref RemoteAccessCIDR
-  EIP:
-    Type: "AWS::EC2::EIP"
+  P2PLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancing::LoadBalancer'
     Properties:
-      InstanceId: !Ref CordaInstance
+      Subnets:
+        - !Ref PublicSubnet1ID
+        - !Ref PublicSubnet2ID
+      Listeners:
+        - LoadBalancerPort: 10002
+          InstancePort: 10002
+          Protocol: TCP
+          InstanceProtocol: TCP
+      HealthCheck:
+        Target: TCP:10002
+        HealthyThreshold: 3
+        UnhealthyThreshold: 5
+        Interval: 30
+        Timeout: 5
+      SecurityGroups:
+        - !Ref CordaSecurityGroup
+  RPCLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancing::LoadBalancer'
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1ID
+        - !Ref PublicSubnet2ID
+      Listeners:
+        - LoadBalancerPort: 10003
+          InstancePort: 10003
+          Protocol: TCP
+          InstanceProtocol: TCP
+      HealthCheck:
+        Target: TCP:10003
+        HealthyThreshold: 3
+        UnhealthyThreshold: 5
+        Interval: 30
+        Timeout: 5
+      SecurityGroups:
+        - !Ref CordaSecurityGroup
   CordaInstance:
     Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - FileSystem
     Metadata:
       'AWS::CloudFormation::Init':
         configSets:
           corda_install:
-            - mount_sharedfs
-            - corda_jar
-            - run_install
-            - systemd_config-corda
-            - systemd_config-corda-webserver
-            - run_service-corda
-            - run_service-corda-webserver
-            - run_corda-log-collection
-        mount_sharedfs:
+            - mount-sharedfs
+            - corda-jar
+            - run-install
+            - systemd-config-corda
+            - run-service-corda
+            - run-corda-log-collection
+        mount-sharedfs:
           packages:
             apt:
               nfs-common: []
@@ -365,15 +436,22 @@ Resources:
             02_mountfs:
               command: !Sub "mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/sharedfs"
             03_create_artemis_on_sharedfs:
-              command: !Sub "mkdir /opt/corda/sharedfs/artemis"
-            04_create_drivers_on_sharedfs:
-              command: !Sub "mkdir /opt/corda/sharedfs/drivers"
-            05_link__artemis_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/artemis"
+            04_create_cordapps_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/cordapps"
+            05_create_drivers_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/drivers"
+            06_create_plugins_on_sharedfs:
+              command: !Sub "mkdir -p /opt/corda/sharedfs/plugins"
+            07_link_artemis_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/artemis /opt/corda/artemis"
-            06_link_drivers_on_sharedfs:
+            08_link_cordapps_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/cordapps /opt/corda/cordapps"
+            09_link_drivers_on_sharedfs:
               command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/drivers"
-
-        systemd_config-corda:
+            10_link_plugins_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/plugins"
+        systemd-config-corda:
           files:
             /etc/systemd/system/corda.service:
               source: !Sub
@@ -384,50 +462,64 @@ Resources:
               mode: '000664'
               owner: root
               group: root
-        systemd_config-corda-webserver:
-          files:
-            /etc/systemd/system/corda-webserver.service:
-              source: !Sub
-                - >-
-                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda-webserver.service
-                - QSS3BucketName: !Ref QSS3BucketName
-                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
-              mode: '000664'
-              owner: root
-              group: root
-        corda_jar:
+        corda-jar:
           packages:
             apt:
               openjdk-8-jdk: []
               wget: []
           files:
-            /home/ubuntu/install_corda.sh:
+            /home/ubuntu/install-node.sh:
               source: !Sub
                 - >-
-                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/install_corda.sh
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/install-node.sh
                 - QSS3BucketName: !Ref QSS3BucketName
                   QSS3KeyPrefix: !Ref QSS3KeyPrefix
               mode: '000755'
               owner: root
               group: root
-        run_install:
+        run-install:
           commands:
             start_install:
-              command: bash /home/ubuntu/install_corda.sh
-        run_service-corda:
+              command: !Sub
+              - >-
+                bash /home/ubuntu/install-node.sh \
+                  "${P2PAddress}" \
+                  "${CountryCode}" \
+                  "${Location}" \
+                  "${RDSEndPoint}" \
+                  "${DBMasterUsername}" \
+                  "${DBMasterUserPassword}" \
+                  "${OneTimeKey}" \
+                  "${RPCAddress}" \
+                  "${P2PELB}" \
+                  "${RPCELB}" \
+                  "${Region}" \
+                  "${TestnetEndpoint}"
+              - P2PAddress: !GetAtt
+                  - P2PLoadBalancer
+                  - DNSName
+                CountryCode: !Ref CountryCode
+                Location: !Ref Location
+                RDSEndPoint: !Ref RDSEndPoint
+                DBName: !Ref DBName
+                DBMasterUsername: !Ref DBMasterUsername
+                DBMasterUserPassword: !Ref DBMasterUserPassword
+                OneTimeKey: !Ref OneTimeKey
+                RPCAddress: !Ref CordaRPCAccessCIDR
+                P2PELB: !Ref P2PLoadBalancer
+                RPCELB: !Ref RPCLoadBalancer
+                Region: !Ref 'AWS::Region'
+                TestnetEndpoint: !Ref TestnetEndpoint
+        run-service-corda:
           commands:
             start_corda :
               command: systemctl start corda.service
-        run_service-corda-webserver:
-          commands:
-            start_corda-weberver :
-              command: systemctl start corda-webserver.service
-        run_corda-log-collection:
+        run-corda-log-collection:
           files:
-            /home/ubuntu/corda-node-logs.sh:
+            /home/ubuntu/node-logs.sh:
               source: !Sub
                 - >-
-                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda-node-logs.sh
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/node-logs.sh
                 - QSS3BucketName: !Ref QSS3BucketName
                   QSS3KeyPrefix: !Ref QSS3KeyPrefix
               mode: '000755'
@@ -435,13 +527,16 @@ Resources:
               group: root
           commands:
             setup-cw-logs :
-              command: bash /home/ubuntu/corda-node-logs.sh
+              command: bash /home/ubuntu/node-logs.sh
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT30M
     Properties:
       KeyName: !Ref KeyPairName
       ImageId: !FindInMap
         - AWSAMIRegionMap
         - !Ref 'AWS::Region'
-        - US1604HVM
+        - CORDA
       InstanceType: !Ref InstanceType
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
@@ -450,7 +545,7 @@ Resources:
       SecurityGroupIds:
         - !Ref CordaSecurityGroup
       SubnetId: !Ref PublicSubnet1ID
-      IamInstanceProfile: !Ref Cordainstanceprofile
+      IamInstanceProfile: !Ref CordaInstanceProfile
       Tags:
         - Key: Name
           Value: !Join
@@ -464,46 +559,209 @@ Resources:
             #CFN Functions
             function cfn_fail
             {
-            cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
-            exit 1
+              cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
+              exit 1
             }
             function cfn_success
             {
-            cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
-            exit 0
+              cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaInstance
+              exit 0
             }
             S3URI=https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}
-            NODE_CONF=${!S3URI}scripts/node.conf_stub
             echo \'[Cloning: Load QuickStart Common Utils]\'
             #Once Repo is public (Use quickstart-linux-utilities submodue)
-            until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git ; do echo "Retring";done
+            until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git ; do echo "Retrying"; done
             cd /quickstart-linux-utilities
             source quickstart-cfn-tools.source
             echo \'[Loaded: Load QuickStart Common Utils]\'
             echo \'[Update Operating System]\'
-            qs_update-os || qs_error
-            qs_bootstrap_pipa || qs_error
-            qs_aws-cfn-bootstrap || qs_error
+            qs_update-os || qs_err
+            qs_bootstrap_pip || qs_err
+            qs_aws-cfn-bootstrap || qs_err
             # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
             sed -i "s/__LOGGROUP__/${CordaLogGroup}/g" cloudwatch_logs.stub
-            qs_cloudwatch_install || qs_error
+            echo "Install CloudWatch agent"
+            qs_cloudwatch_install || qs_err
             # CFN Debug Logs
             qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
             qs_cloudwatch_tracklog /var/log/cloud-init.log
             qs_cloudwatch_tracklog /var/log/cloud-init-output.log
+            qs_cloudwatch_tracklog /var/log/cfn-init.log
+            qs_cloudwatch_tracklog /var/log/cfn-init-cmd.log
+            echo "Executing config-sets"
             cfn-init -v --stack ${AWS::StackName} --resource CordaInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
-            # Generate node.conf
-            wget ${!NODE_CONF} -O /opt/corda/node.conf
-            sed -i "s/__EMAILADDRESS__/${EmailAddress}/g" /opt/corda/node.conf
-            sed -i "s/__LEGALNAME__/${LegalName}/g" /opt/corda/node.conf
-            sed -i "s/__IPADDRESS__/$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)/g" /opt/corda/node.conf
-            # Add RDS
-            sed -i "s,__DATASOURCE_URL__,${RDSEndPoint},g" /opt/corda/node.conf
-            sed -i "s,__DATASOURCE_USER__,${DBMasterUsername},g" /opt/corda/node.conf
-            sed -i "s,__DATASOURCE_PASSWORD__,${DBMasterUserPassword},g" /opt/corda/node.conf
-
-            # One Time Key
-            echo ${OneTimeKey} > /opt/corda/onetimekey
+            # Signal cfn-init (final check)
+            [ $(qs_status) == 0 ] && cfn_success || cfn_fail
+          - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
+  CordaColdInstance:
+    Type: 'AWS::EC2::Instance'
+    DependsOn: CordaInstance
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          corda_install:
+            - mount-sharedfs
+            - corda-jar
+            - run-install
+            - systemd-config-corda
+            - run-service-corda
+            - run-corda-log-collection
+        mount-sharedfs:
+          packages:
+            apt:
+              nfs-common: []
+          commands:
+            01_createdir:
+              command: !Sub "mkdir -p /opt/corda/sharedfs"
+            02_mountfs:
+              command: !Sub "mount -t nfs4 -o nfsvers=4.1 ${FileSystem}.efs.${AWS::Region}.amazonaws.com:/ /opt/corda/sharedfs"
+            03_link_artemis_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/artemis /opt/corda/artemis"
+            04_link_cordapps_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/cordapps /opt/corda/cordapps"
+            05_link_drivers_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/drivers"
+            06_link_plugins_on_sharedfs:
+              command: !Sub "ln -s /opt/corda/sharedfs/drivers /opt/corda/plugins"
+        systemd-config-corda:
+          files:
+            /etc/systemd/system/corda.service:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/corda.service
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000664'
+              owner: root
+              group: root
+        corda-jar:
+          packages:
+            apt:
+              openjdk-8-jdk: []
+              wget: []
+          files:
+            /home/ubuntu/install-node.sh:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/install-cold-node.sh
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000755'
+              owner: root
+              group: root
+        run-install:
+          commands:
+            start_install:
+              command: !Sub
+              - >-
+                bash /home/ubuntu/install-node.sh \
+                  "${P2PAddress}" \
+                  "${CountryCode}" \
+                  "${Location}" \
+                  "${RDSEndPoint}" \
+                  "${DBMasterUsername}" \
+                  "${DBMasterUserPassword}" \
+                  "${OneTimeKey}" \
+                  "${RPCAddress}" \
+                  "${P2PELB}" \
+                  "${RPCELB}" \
+                  "${Region}" \
+                  "${TestnetEndpoint}"
+              - P2PAddress: !GetAtt
+                  - P2PLoadBalancer
+                  - DNSName
+                CountryCode: !Ref CountryCode
+                Location: !Ref Location
+                RDSEndPoint: !Ref RDSEndPoint
+                DBName: !Ref DBName
+                DBMasterUsername: !Ref DBMasterUsername
+                DBMasterUserPassword: !Ref DBMasterUserPassword
+                OneTimeKey: !Ref OneTimeKey
+                RPCAddress: !Ref CordaRPCAccessCIDR
+                P2PELB: !Ref P2PLoadBalancer
+                RPCELB: !Ref RPCLoadBalancer
+                Region: !Ref 'AWS::Region'
+                TestnetEndpoint: !Ref TestnetEndpoint
+        run-service-corda:
+          commands:
+            start_corda :
+              command: systemctl start corda.service
+        run-corda-log-collection:
+          files:
+            /home/ubuntu/node-logs.sh:
+              source: !Sub
+                - >-
+                  https://s3.amazonaws.com/${QSS3BucketName}/${QSS3KeyPrefix}scripts/node-logs.sh
+                - QSS3BucketName: !Ref QSS3BucketName
+                  QSS3KeyPrefix: !Ref QSS3KeyPrefix
+              mode: '000755'
+              owner: root
+              group: root
+          commands:
+            setup-cw-logs :
+              command: bash /home/ubuntu/node-logs.sh
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT30M
+    Properties:
+      KeyName: !Ref KeyPairName
+      ImageId: !FindInMap
+        - AWSAMIRegionMap
+        - !Ref 'AWS::Region'
+        - CORDA
+      InstanceType: !Ref InstanceType
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: '100'
+      SecurityGroupIds:
+        - !Ref CordaSecurityGroup
+      SubnetId: !Ref PublicSubnet2ID
+      IamInstanceProfile: !Ref CordaInstanceProfile
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'AWS::StackName'
+              - 'CordaNode'
+      UserData: !Base64
+        Fn::Sub:
+          - |
+            #!/bin/bash -x
+            #CFN Functions
+            function cfn_fail
+            {
+              cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaColdInstance
+              exit 1
+            }
+            function cfn_success
+            {
+              cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource CordaColdInstance
+              exit 0
+            }
+            S3URI=https://${QSS3BucketName}.${S3Region}.amazonaws.com/${QSS3KeyPrefix}
+            echo \'[Cloning: Load QuickStart Common Utils]\'
+            #Once Repo is public (Use quickstart-linux-utilities submodue)
+            until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git ; do echo "Retrying"; done
+            cd /quickstart-linux-utilities
+            source quickstart-cfn-tools.source
+            echo \'[Loaded: Load QuickStart Common Utils]\'
+            echo \'[Update Operating System]\'
+            qs_update-os || qs_err
+            qs_bootstrap_pip || qs_err
+            qs_aws-cfn-bootstrap || qs_err
+            # Set Log Group Name (TODO: create qs_cloudwatch_loggroup_set)
+            sed -i "s/__LOGGROUP__/${ColdCordaLogGroup}/g" cloudwatch_logs.stub
+            echo "Install CloudWatch agent"
+            qs_cloudwatch_install || qs_err
+            # CFN Debug Logs
+            qs_cloudwatch_tracklog /var/lib/cloud/instance/scripts/part-001
+            qs_cloudwatch_tracklog /var/log/cloud-init.log
+            qs_cloudwatch_tracklog /var/log/cloud-init-output.log
+            qs_cloudwatch_tracklog /var/log/cfn-init.log
+            qs_cloudwatch_tracklog /var/log/cfn-init-cmd.log
+            echo "Executing config-sets"
+            cfn-init -v --stack ${AWS::StackName} --resource CordaColdInstance --configsets corda_install --region ${AWS::Region} || cfn_fail
             # Signal cfn-init (final check)
             [ $(qs_status) == 0 ] && cfn_success || cfn_fail
           - S3Region: !If [ GovCloudCondition, s3-us-gov-west-1, s3 ]
@@ -512,7 +770,25 @@ Outputs:
     Value: !GetAtt
       - CordaInstance
       - PublicDnsName
-    Description: Public DNS Name for the Corda Instance
+    Description: Public DNS name for the Corda instance
+  CordaColdInstancePublicDnsName:
+    Value: !GetAtt
+      - CordaColdInstance
+      - PublicDnsName
+    Description: Public DNS name for the cold Corda instance
+  P2PDnsName:
+    Value: !GetAtt
+      - P2PLoadBalancer
+      - DNSName
+    Description: Public DNS name for the P2P load balancer
+  RPCDnsName:
+    Value: !GetAtt
+      - RPCLoadBalancer
+      - DNSName
+    Description: Public DNS name for the RPC load balancer
   CordaInstancePublicIPAddress:
     Value: !Sub 'ubuntu@${CordaInstance.PublicIp}'
     Description: Public IP address for the Corda instance
+  CordaColdInstancePublicIPAddress:
+    Value: !Sub 'ubuntu@${CordaColdInstance.PublicIp}'
+    Description: Public IP address for the cold Corda instance

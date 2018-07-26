@@ -4,16 +4,16 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
+        "ParameterKey": "CordaRPCAccessCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "gI1yW9zD6"
+        "ParameterValue": "$[taskcat_genpass_8A]"
     },
     {
         "ParameterKey": "DBMasterUsername",
-        "ParameterValue": "aurorapg"
-    },
-    {
-        "ParameterKey": "EmailAddress",
-        "ParameterValue": "none@none.com"
+        "ParameterValue": "cordauser"
     },
     {
         "ParameterKey": "InstanceType",
@@ -21,15 +21,19 @@
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "tonynv"
+        "ParameterValue": "taskcat"
     },
     {
-        "ParameterKey": "LegalName",
-        "ParameterValue": "Taskcat Test"
+        "ParameterKey": "CountryCode",
+        "ParameterValue": "GB"
+    },
+    {
+        "ParameterKey": "Location",
+        "ParameterValue": "London"
     },
     {
         "ParameterKey": "OneTimeKey",
-        "ParameterValue": "onetimekey"
+        "ParameterValue": "0000-0000-0000-0000-0000-0000"
     },
     {
         "ParameterKey": "PrivateSubnet1CIDR",
@@ -37,7 +41,7 @@
     },
     {
         "ParameterKey": "PrivateSubnet1ID",
-        "ParameterValue": "subnet-0ac8304418377ca7c"
+        "ParameterValue": "subnet-0af32b95674294d2a"
     },
     {
         "ParameterKey": "PrivateSubnet2CIDR",
@@ -45,7 +49,7 @@
     },
     {
         "ParameterKey": "PrivateSubnet2ID",
-        "ParameterValue": "subnet-01f60395b79d3ccbd"
+        "ParameterValue": "subnet-0a17bf8348b3f22ef"
     },
     {
         "ParameterKey": "PublicSubnet1CIDR",
@@ -53,7 +57,7 @@
     },
     {
         "ParameterKey": "PublicSubnet1ID",
-        "ParameterValue": "subnet-0e06530ad25131eb3"
+        "ParameterValue": "subnet-0359409061f2199a5"
     },
     {
         "ParameterKey": "PublicSubnet2CIDR",
@@ -61,7 +65,7 @@
     },
     {
         "ParameterKey": "PublicSubnet2ID",
-        "ParameterValue": "subnet-0aa18639852b83e71"
+        "ParameterValue": "subnet-01a28e16ade23de3a"
     },
     {
         "ParameterKey": "QSS3BucketName",
@@ -73,7 +77,7 @@
     },
     {
         "ParameterKey": "RDSEndPoint",
-        "ParameterValue": "tcat-tag-corda-56b79838-cordastac-auroradbcluster-jkrzikagt44h.cluster-cqkx5uin33n9.us-west-2.rds.amazonaws.com:3306/CordaQuickstartDB"
+        "ParameterValue": "some.endpoint.com:3306/cordatest"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -85,6 +89,10 @@
     },
     {
         "ParameterKey": "VPCID",
-        "ParameterValue": "vpc-0fee3a473bac1c4a0"
+        "ParameterValue": "vpc-0048cce9995fe8950"
+    },
+    {
+        "ParameterKey": "TestnetEndpoint",
+        "ParameterValue": "https://6fv37fh1yj.execute-api.us-east-1.amazonaws.com/stage"
     }
 ]

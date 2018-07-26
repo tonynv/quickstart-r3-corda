@@ -4,16 +4,16 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
-        "ParameterKey": "LegalName",
-        "ParameterValue": "Some Name"
+        "ParameterKey": "CountryCode",
+        "ParameterValue": "GB"
     },
     {
-        "ParameterKey": "EmailAddress",
-        "ParameterValue": "someone@somewhere.com"
+        "ParameterKey": "Location",
+        "ParameterValue": "London"
     },
     {
         "ParameterKey": "KeyPairName",
-        "ParameterValue": "tonynv"
+        "ParameterValue": "taskcat"
     },
     {
         "ParameterKey": "QSS3BucketName",
@@ -25,7 +25,7 @@
     },
     {
         "ParameterKey": "OneTimeKey",
-        "ParameterValue": "onetimekey"
+        "ParameterValue": "0000-0000-0000-0000-0000-0000"
     },
     {
         "ParameterKey": "RemoteAccessCIDR",
@@ -36,7 +36,7 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
-        "ParameterKey": "CordaWebserverCIDR",
+        "ParameterKey": "CordaRPCAccessCIDR",
         "ParameterValue": "0.0.0.0/0"
     },
     {
@@ -50,5 +50,9 @@
     {
         "ParameterKey": "VPCCIDR",
         "ParameterValue": "10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "TestnetEndpoint",
+        "ParameterValue": "https://6fv37fh1yj.execute-api.us-east-1.amazonaws.com/stage"
     }
 ]
