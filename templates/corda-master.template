@@ -24,6 +24,7 @@ Metadata:
           - Location
           - CountryCode
           - OneTimeKey
+          - TestnetEndpoint
       - Label:
           default: Corda RDS Configuration
         Parameters:
@@ -49,6 +50,8 @@ Metadata:
         default: Country code
       OneTimeKey:
         default: One-time key
+      TestnetEndpoint:
+        default: Corda Testnet endpoint
       PublicSubnet1CIDR:
         default: Public Subnet 1 CIDR
       PublicSubnet2CIDR:
@@ -112,6 +115,10 @@ Parameters:
   OneTimeKey:
     Description: The one-time key that you received when you created a new node on
       Corda Testnet (code valid for 1 hour).
+    Type: String
+  TestnetEndpoint:
+    Description: The base URL of Corda Testnet
+    Default: https://testnet.corda.network
     Type: String
   KeyPairName:
     Description: The name of an existing public/private key pair, which allows you to
@@ -340,6 +347,7 @@ Resources:
         CountryCode: !Ref CountryCode
         Location: !Ref Location
         OneTimeKey: !Ref OneTimeKey
+        TestnetEndpoint: !Ref TestnetEndpoint
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
         PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
         PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID

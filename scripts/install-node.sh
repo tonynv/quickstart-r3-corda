@@ -16,13 +16,12 @@ RPC_IP="$(echo "${8:-}" | sed 's#/.*$##')"
 P2P_LOAD_BALANCER="${9:-}"
 RPC_LOAD_BALANCER="${10:-}"
 REGION="${11:-}"
+TESTNET_URL="${12:-https://testnet.corda.network}"
 
 # Constants
 
 INSTALL_DIR="/opt/corda"
 NODE_CONFIG_FILE="/opt/corda/node.conf"
-
-TESTNET_URL="https://testnet.corda.network"
 
 PLATFORM="AWS"
 DISTRO="ENTERPRISE"
@@ -80,7 +79,7 @@ log "Retrieving configuration file, identity, truststore and binaries from '$TES
 sudo curl -L -s \
     -d "{\"x500Name\":{\"locality\":\"$LOCATION\",\"country\":\"$COUNTRY_CODE\"},\"configType\":\"$PLATFORM\",\"distribution\":\"$DISTRO\"}" \
     -H "Content-Type: application/json" \
-    -X POST "$TESTNET_URL/api/user/node/generate/one-time-key/redeem/$ONE_TIME_DOWNLOAD_KEY" \
+    "$TESTNET_URL/api/user/node/generate/one-time-key/redeem/$ONE_TIME_DOWNLOAD_KEY" \
     -o "$INSTALL_DIR/corda.zip" || error "Unable to download config template and truststore"
 
 log "Distribution bundle stored to '$INSTALL_DIR/corda.zip'"
