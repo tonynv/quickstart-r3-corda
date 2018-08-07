@@ -14,6 +14,8 @@ global:
   reporting: true
 
 tests:
-  corda-test:
-     parameter_input: corda-master.json
-     template_file: corda-master.template
+  corda:
+    parameter_input: taskcat.json
+    template_file: corda-master.template
+    regions:
+      - us-west-1
