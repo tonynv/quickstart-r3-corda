@@ -12,6 +12,11 @@ Metadata:
           - PublicSubnet2ID
           - PrivateSubnet1ID
           - PrivateSubnet2ID
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
+
       - Label:
           default: Corda Configuration
         Parameters:
@@ -27,6 +32,7 @@ Metadata:
       - Label:
           default: Corda Database Configuration
         Parameters:
+          - DBName
           - DBMasterUsername
           - DBMasterUserPassword
           - RDSEndPoint
