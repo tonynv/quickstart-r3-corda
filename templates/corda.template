@@ -4,9 +4,8 @@ Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
       - Label:
-          default: Network Configuration
+          default: Network Configuration (existing vpc)
         Parameters:
-          - RemoteAccessCIDR
           - PublicSubnet1ID
           - PublicSubnet2ID
           - PrivateSubnet1ID
@@ -14,13 +13,14 @@ Metadata:
           - VPCCIDR
           - VPCID
       - Label:
-          default: Corda EC2 Configuration
+          default: Corda Configuration
         Parameters:
           - Location
           - CountryCode
           - OneTimeKey
           - TestnetEndpoint
           - KeyPairName
+          - RemoteAccessCIDR
           - CordaAccessCIDR
           - CordaRPCAccessCIDR
           - InstanceType

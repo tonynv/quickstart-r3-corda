@@ -7,16 +7,14 @@ Metadata:
           default: Network Configuration (new VPC)
         Parameters:
           - AvailabilityZones
-          - CordaAccessCIDR
-          - CordaRPCAccessCIDR
           - NumberOfAZs
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
-          - RemoteAccessCIDR
           - VPCCIDR
       - Label:
           default: Corda Configuration
         Parameters:
+          - RemoteAccessCIDR
           - CordaAccessCIDR
           - CordaRPCAccessCIDR
           - InstanceType
