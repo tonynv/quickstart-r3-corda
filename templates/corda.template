@@ -244,7 +244,6 @@ Parameters:
     Description: The database admin account username
     MaxLength: '16'
     MinLength: '1'
-    NoEcho: 'true'
     Type: String
   DBMultiAZ:
     AllowedValues:
