@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Corda Infrastructure - Workload, License: Apache 2.0 (Please do not remove) Aug,10,2018 (qs-1odje6cib)'
+Description: 'Corda Infrastructure - Workload, License: Apache 2.0 (Please do not remove) Aug,14,2018 (qs-1odje6cib)'
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
