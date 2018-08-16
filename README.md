@@ -1,7 +1,7 @@
 # quickstart-r3-corda
-Corda Enterprise on the AWS Cloud
+### Corda Enterprise Blockchain on the AWS Cloud
 
-This Quick Start reference deployment guide provides step-by-step instructions for deploying Corda Enterprise on the Amazon Web Services (AWS) Cloud. It automatically deploys a Corda node in a new or existing virtual private cloud (VPC) in about 30 minutes.
+This Quick Start automatically deploys a Corda node in a new or existing virtual private cloud (VPC) in about 30 minutes.
 
 Corda is a blockchain technology platform built to transform the way the world does business. Using smart contract and blockchain technology, Corda allows existing business networks to reduce transaction and record-keeping costs and to streamline business operations.
 
@@ -17,3 +17,5 @@ You can use the AWS CloudFormation templates included with the Quick Start to bu
 ![Quick Start architecture for Corda Enterprise on AWS](https://d0.qwsstatic.com/partner-network/QuickStart/datasheets/corda-blockchain-architecture-on-aws.png)
 
 For architectural details and step-by-step instructions, see the [deployment guide](https://s3.amazonaws.com/aws-quickstart/quickstart-r3-corda/doc/corda-on-the-aws-cloud.pdf).
+
+To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/).
