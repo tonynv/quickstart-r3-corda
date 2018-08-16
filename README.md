@@ -14,7 +14,7 @@ You can use the AWS CloudFormation templates included with the Quick Start to bu
 - Deploying Corda Enterprise into a new VPC
 - Deploying Corda Enterprise into an existing VPC
 
-![Quick Start architecture for Corda Enterprise on AWS](https://d0.qwsstatic.com/partner-network/QuickStart/datasheets/corda-blockchain-architecture-on-aws.png)
+![Quick Start architecture for Corda Enterprise on AWS](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/corda-blockchain-architecture-on-aws.png)
 
 For architectural details and step-by-step instructions, see the [deployment guide](https://s3.amazonaws.com/aws-quickstart/quickstart-r3-corda/doc/corda-on-the-aws-cloud.pdf).
 
